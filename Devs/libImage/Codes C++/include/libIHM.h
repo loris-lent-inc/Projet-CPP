@@ -1,11 +1,9 @@
 #pragma once
 
-#include "ImageClasse.h"
-#include "ImageNdg.h"
-#include "ImageCouleur.h"
-#include "ImageDouble.h"
-
-#include <windows.h>
+#include "ImageClasse.hpp"
+#include "ImageNdg.hpp"
+#include "ImageCouleur.hpp"
+#include "ImageDouble.hpp"
 
 class ClibIHM {
 
@@ -13,17 +11,17 @@ class ClibIHM {
 private:
 	///////////////////////////////////////
 
-	// data nécessaires à l'IHM donc fonction de l'application ciblée
+	// data nï¿½cessaires ï¿½ l'IHM donc fonction de l'application ciblï¿½e
 	int						nbDataImg; // nb champs Texte de l'IHM
 	std::vector<double>		dataFromImg; // champs Texte de l'IHM
-	CImageCouleur*          imgPt; objetLibDataImg// 
+	CImageCouleur*			imgPt;       // 
 
 	///////////////////////////////////////
 public:
 	///////////////////////////////////////
 
 	// constructeurs
-	_declspec(dllexport) ClibIHM(); // par défaut
+	_declspec(dllexport) ClibIHM(); // par dï¿½faut
 
 	_declspec(dllexport) ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol); // par image format bmp C#
 

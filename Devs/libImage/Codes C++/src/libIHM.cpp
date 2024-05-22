@@ -8,7 +8,7 @@
 #include <ctime>
 #include <stack>
 
-#include "libIHM.h"
+#include "../include/libIHM.h"
 
 ClibIHM::ClibIHM() {
 
@@ -24,8 +24,7 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol){
 	this->imgPt = new CImageCouleur(nbLig, nbCol);
 	CImageCouleur out(nbLig, nbCol);
 
-	// on remplit les pixels 
-
+	// RECUPERTION DES DONNEES DE L'IMAGE
 	byte* pixPtr = (byte*)data;
 
 	for (int y = 0; y < nbLig; y++)
@@ -38,24 +37,33 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol){
 		}
 		pixPtr += stride; // largeur une seule ligne gestion multiple 32 bits
 	}
+	
+	CImageNdg img = this->imgPt->plan();
+	// TRAITEMENT
+	/*CImageNdg img = this->imgPt->plan(3);
+	CImageNdg wth = img.morphologie("WTH");
+	CImageNdg bth = img.morphologie("BTH");
 
-	CImageNdg seuil;
+	double scoreWTH = wth.correlation_croisee_normalisee();
+	double scoreBTH = bth.correlation_croisee_normalisee();
+	CImageNdg bst;
+	
+	if (scoreWTH > scoreBTH)
+		bst = wth;
+	else
+		bst = bth;
 
-	int seuilBas = 128;
-	int seuilHaut = 255;
+	CImageClasse imgSeuil = CImageClasse(bst.seuillage(), "V4");
 
-	seuil = this->imgPt->plan().seuillage("automatique",seuilBas,seuilHaut);
+	double scoreIOU = imgSeuil.IOU();
+	double scoreVinet = imgSeuil.Vinet();
 
-	this->dataFromImg.at(0) = seuilBas;
+	out = CImageCouleur(imgSeuil.toNdg("expansion"));*/
 
-	for (int i = 0; i < seuil.lireNbPixels(); i++)
-	{
-		out(i)[0] = (unsigned char)(255*(int)seuil(i));
-		out(i)[1] = 0;
-		out(i)[2] = 0;
-	}
-		
 
+
+	out = CImageCouleur(img);
+	// RECONTRUCTION DU RETOUR IMAGE
 	pixPtr = (byte*)data;
 	for (int y = 0; y < nbLig; y++)
 	{

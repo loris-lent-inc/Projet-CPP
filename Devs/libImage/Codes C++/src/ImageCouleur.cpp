@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "ImageCouleur.hpp"
+#include "../include/ImageCouleur.hpp"
 
 // constructeurs et destructeur
 CImageCouleur::CImageCouleur()

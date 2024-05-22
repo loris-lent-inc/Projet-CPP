@@ -8,9 +8,8 @@
 #include <string>
 #include <vector>
 
-#include "ImageClasse.hpp"
-
-#include "ImageDouble.hpp"
+#include "../include/ImageClasse.hpp"
+#include "../include/ImageDouble.hpp"
 
 #define MAGIC_NUMBER_BMP ('B' + ('M' << 8)) // signature bitmap windows
 
@@ -351,7 +350,7 @@ CImageClasse::CImageClasse(const CImageNdg & im, int nbClusters, std::string cho
         if (h[i])
             nbLevels++;
     int nbClasses;
-    nbClasses    = std::min(nbClusters, nbLevels);
+    nbClasses    = min(nbClusters, nbLevels);
     m_lNbRegions = nbClasses;
 
     if (strcmp(choix.c_str(), "aleatoire") == 0)
@@ -502,7 +501,7 @@ CImageClasse::CImageClasse(const CImageCouleur & im, int nbClusters, std::string
         if (h[i])
             nbLevels++;
     int nbClasses;
-    nbClasses    = std::min(nbClusters, nbLevels);
+    nbClasses    = min(nbClusters, nbLevels);
     m_lNbRegions = nbClasses;
 
     if (strcmp(choix.c_str(), "aleatoire") == 0)
@@ -1241,10 +1240,10 @@ std::vector<SIGNATURE_Forme> CImageClasse::sigComposantesConnexes(bool enregistr
                     tab[pix].premierPt_i = i;
                 if (tab[pix].premierPt_j == -1)
                     tab[pix].premierPt_j = j;
-                tab[pix].rectEnglob_Bi = std::max(tab[pix].rectEnglob_Bi, i);
-                tab[pix].rectEnglob_Bj = std::max(tab[pix].rectEnglob_Bj, j);
-                tab[pix].rectEnglob_Hi = std::min(tab[pix].rectEnglob_Hi, i);
-                tab[pix].rectEnglob_Hj = std::min(tab[pix].rectEnglob_Hj, j);
+                tab[pix].rectEnglob_Bi = max(tab[pix].rectEnglob_Bi, i);
+                tab[pix].rectEnglob_Bj = max(tab[pix].rectEnglob_Bj, j);
+                tab[pix].rectEnglob_Hi = min(tab[pix].rectEnglob_Hi, i);
+                tab[pix].rectEnglob_Hj = min(tab[pix].rectEnglob_Hj, j);
             }
 
         for (int k = 0; k < (int)tab.size(); k++)
@@ -1281,9 +1280,9 @@ std::vector<SIGNATURE_Forme> CImageClasse::sigComposantesConnexes(bool enregistr
                 for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
                     if (this->operator()(i - 1, j - 1) != 0)
                     {
-                        unsigned long minH  = std::min(agrandie(i, j - 1), agrandie(i, j + 1));
-                        unsigned long minV  = std::min(agrandie(i - 1, j), agrandie(i + 1, j));
-                        unsigned long minV4 = std::min(minH, minV);
+                        unsigned long minH  = min(agrandie(i, j - 1), agrandie(i, j + 1));
+                        unsigned long minV  = min(agrandie(i - 1, j), agrandie(i + 1, j));
+                        unsigned long minV4 = min(minH, minV);
                         copie(i - 1, j - 1) = minV4;
                     }
 
@@ -1295,12 +1294,12 @@ std::vector<SIGNATURE_Forme> CImageClasse::sigComposantesConnexes(bool enregistr
             for (int i = 1; i < agrandie.lireHauteur() - 1; i++)
                 for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
                 {
-                    unsigned long minH  = std::min(agrandie(i, j - 1), agrandie(i, j + 1));
-                    unsigned long maxH  = std::max(agrandie(i, j - 1), agrandie(i, j + 1));
-                    unsigned long minV  = std::min(agrandie(i - 1, j), agrandie(i + 1, j));
-                    unsigned long maxV  = std::max(agrandie(i - 1, j), agrandie(i + 1, j));
-                    unsigned long minV4 = std::min(minH, minV);
-                    unsigned long maxV4 = std::max(maxH, maxV);
+                    unsigned long minH  = min(agrandie(i, j - 1), agrandie(i, j + 1));
+                    unsigned long maxH  = max(agrandie(i, j - 1), agrandie(i, j + 1));
+                    unsigned long minV  = min(agrandie(i - 1, j), agrandie(i + 1, j));
+                    unsigned long maxV  = max(agrandie(i - 1, j), agrandie(i + 1, j));
+                    unsigned long minV4 = min(minH, minV);
+                    unsigned long maxV4 = max(maxH, maxV);
                     if (!((agrandie(i, j) == minV4) && (agrandie(i, j) == maxV4))) // pixel diff�rent de ses voisins
                         copie(i - 1, j - 1) = 0;
                 }
@@ -1862,8 +1861,8 @@ void CImageClasse::cerclesComposantesConnexes(const std::vector<SIGNATURE_Forme>
                 if (contours_externe(i, j) != 0)
                 {
                     double distance_Sq = pow(i - centerX, 2) + pow(j - centerY, 2);
-                    rayonMax_Sq = std::max(rayonMax_Sq, distance_Sq);
-                    rayonMin_Sq = std::min(rayonMin_Sq, distance_Sq);
+                    rayonMax_Sq = max(rayonMax_Sq, distance_Sq);
+                    rayonMin_Sq = min(rayonMin_Sq, distance_Sq);
                 }
             }
         }
@@ -1917,13 +1916,13 @@ _EXPORT_ double CImageClasse::Vinet(const CImageClasse& ref) {
     auto loc_sig = this->sigComposantesConnexes(false);
     auto ref_sig = ref.sigComposantesConnexes(false);
 
-    int min_nb = std::min(loc_sig.size(), ref_sig.size());
+    int min_nb = min(loc_sig.size(), ref_sig.size());
 
     for (int i = 1; i < min_nb; i++) {
-        int left = std::min(loc_sig[i].rectEnglob_Hj, ref_sig[i].rectEnglob_Hj);
-        int right = std::max(loc_sig[i].rectEnglob_Bj, ref_sig[i].rectEnglob_Bj);
-        int top = std::min(loc_sig[i].rectEnglob_Hi, ref_sig[i].rectEnglob_Hi);
-        int bottom = std::max(loc_sig[i].rectEnglob_Bi, ref_sig[i].rectEnglob_Bi);
+        int left = min(loc_sig[i].rectEnglob_Hj, ref_sig[i].rectEnglob_Hj);
+        int right = max(loc_sig[i].rectEnglob_Bj, ref_sig[i].rectEnglob_Bj);
+        int top = min(loc_sig[i].rectEnglob_Hi, ref_sig[i].rectEnglob_Hi);
+        int bottom = max(loc_sig[i].rectEnglob_Bi, ref_sig[i].rectEnglob_Bi);
         int h = bottom - top;
         int w = right - left;
 		double iou = this->localIOU(ref, left, top, right - left, bottom - top);

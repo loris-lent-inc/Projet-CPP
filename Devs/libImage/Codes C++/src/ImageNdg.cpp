@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "ImageDouble.hpp"
-#include "ImageNdg.hpp"
+#include "../include/ImageDouble.hpp"
+#include "../include/ImageNdg.hpp"
 
 // constructeurs et destructeur
 CImageNdg::CImageNdg()
@@ -640,10 +640,10 @@ CImageNdg CImageNdg::morphologie(const std::string methode, const std::string el
             for (int i = 1; i < agrandie.lireHauteur() - 1; i++)
                 for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
                 {
-                    int minH          = std::min(agrandie(i, j - 1), agrandie(i, j + 1));
-                    int minV          = std::min(agrandie(i - 1, j), agrandie(i + 1, j));
-                    int minV4         = std::min(minH, minV);
-                    out(i - 1, j - 1) = std::min(minV4, (int)agrandie(i, j));
+                    int minH          = min(agrandie(i, j - 1), agrandie(i, j + 1));
+                    int minV          = min(agrandie(i - 1, j), agrandie(i + 1, j));
+                    int minV4         = min(minH, minV);
+                    out(i - 1, j - 1) = min(minV4, (int)agrandie(i, j));
                 }
         }
         else
@@ -653,14 +653,14 @@ CImageNdg CImageNdg::morphologie(const std::string methode, const std::string el
                 for (int i = 1; i < agrandie.lireHauteur() - 1; i++)
                     for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
                     {
-                        int minH          = std::min(agrandie(i, j - 1), agrandie(i, j + 1));
-                        int minV          = std::min(agrandie(i - 1, j), agrandie(i + 1, j));
-                        int minV4         = std::min(minH, minV);
-                        int minD1         = std::min(agrandie(i - 1, j - 1), agrandie(i + 1, j + 1));
-                        int minD2         = std::min(agrandie(i - 1, j + 1), agrandie(i + 1, j - 1));
-                        int minD          = std::min(minD1, minD2);
-                        int minV8         = std::min(minV4, minD);
-                        out(i - 1, j - 1) = std::min(minV8, (int)agrandie(i, j));
+                        int minH          = min(agrandie(i, j - 1), agrandie(i, j + 1));
+                        int minV          = min(agrandie(i - 1, j), agrandie(i + 1, j));
+                        int minV4         = min(minH, minV);
+                        int minD1         = min(agrandie(i - 1, j - 1), agrandie(i + 1, j + 1));
+                        int minD2         = min(agrandie(i - 1, j + 1), agrandie(i + 1, j - 1));
+                        int minD          = min(minD1, minD2);
+                        int minV8         = min(minV4, minD);
+                        out(i - 1, j - 1) = min(minV8, (int)agrandie(i, j));
                     }
             }
         }
@@ -698,10 +698,10 @@ CImageNdg CImageNdg::morphologie(const std::string methode, const std::string el
                 for (int i = 1; i < agrandie.lireHauteur() - 1; i++)
                     for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
                     {
-                        int maxH          = std::max(agrandie(i, j - 1), agrandie(i, j + 1));
-                        int maxV          = std::max(agrandie(i - 1, j), agrandie(i + 1, j));
-                        int maxV4         = std::max(maxH, maxV);
-                        out(i - 1, j - 1) = std::max(maxV4, (int)agrandie(i, j));
+                        int maxH          = max(agrandie(i, j - 1), agrandie(i, j + 1));
+                        int maxV          = max(agrandie(i - 1, j), agrandie(i + 1, j));
+                        int maxV4         = max(maxH, maxV);
+                        out(i - 1, j - 1) = max(maxV4, (int)agrandie(i, j));
                     }
             }
             else
@@ -711,14 +711,14 @@ CImageNdg CImageNdg::morphologie(const std::string methode, const std::string el
                     for (int i = 1; i < agrandie.lireHauteur() - 1; i++)
                         for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
                         {
-                            int maxH          = std::max(agrandie(i, j - 1), agrandie(i, j + 1));
-                            int maxV          = std::max(agrandie(i - 1, j), agrandie(i + 1, j));
-                            int maxV4         = std::max(maxH, maxV);
-                            int maxD1         = std::max(agrandie(i - 1, j - 1), agrandie(i + 1, j + 1));
-                            int maxD2         = std::max(agrandie(i - 1, j + 1), agrandie(i + 1, j - 1));
-                            int maxD          = std::max(maxD1, maxD2);
-                            int maxV8         = std::max(maxV4, maxD);
-                            out(i - 1, j - 1) = std::max(maxV8, (int)agrandie(i, j));
+                            int maxH          = max(agrandie(i, j - 1), agrandie(i, j + 1));
+                            int maxV          = max(agrandie(i - 1, j), agrandie(i + 1, j));
+                            int maxV4         = max(maxH, maxV);
+                            int maxD1         = max(agrandie(i - 1, j - 1), agrandie(i + 1, j + 1));
+                            int maxD2         = max(agrandie(i - 1, j + 1), agrandie(i + 1, j - 1));
+                            int maxD          = max(maxD1, maxD2);
+                            int maxV8         = max(maxV4, maxD);
+                            out(i - 1, j - 1) = max(maxV8, (int)agrandie(i, j));
                         }
                 }
             }
@@ -781,10 +781,10 @@ CImageNdg CImageNdg::filtrage(const std::string & methode, int Ni, int Nj)
             for (int j = 0; j < this->lireLargeur(); j++)
             {
                 // gestion des bords
-                int dk      = std::max(0, i - nbBordsi);
-                int fk      = std::min(i + nbBordsi, this->lireHauteur() - 1);
-                int dl      = std::max(0, j - nbBordsj);
-                int fl      = std::min(j + nbBordsj, this->lireLargeur() - 1);
+                int dk      = max(0, i - nbBordsi);
+                int fk      = min(i + nbBordsi, this->lireHauteur() - 1);
+                int dl      = max(0, j - nbBordsj);
+                int fl      = min(j + nbBordsj, this->lireLargeur() - 1);
 
                 float somme = 0;
                 float moy   = 0;
@@ -808,10 +808,10 @@ CImageNdg CImageNdg::filtrage(const std::string & methode, int Ni, int Nj)
             for (int j = 0; j < this->lireLargeur(); j++)
             {
                 // gestion des bords
-                int dk = std::max(0, i - nbBordsi);
-                int fk = std::min(i + nbBordsi, this->lireHauteur() - 1);
-                int dl = std::max(0, j - nbBordsj);
-                int fl = std::min(j + nbBordsj, this->lireLargeur() - 1);
+                int dk = max(0, i - nbBordsi);
+                int fk = min(i + nbBordsi, this->lireHauteur() - 1);
+                int dl = max(0, j - nbBordsj);
+                int fl = min(j + nbBordsj, this->lireLargeur() - 1);
 
                 voisinage.resize((fk - dk + 1) * (fl - dl + 1));
                 int indMed = (fk - dk + 1) * (fl - dl + 1) / 2;
@@ -1051,4 +1051,35 @@ _EXPORT_ CImageNdg CImageNdg::verticalConcatenate(const CImageNdg & im)
     }
 
     return res;
+}
+
+_EXPORT_ double CImageNdg::correlation_croisee_normalisee(const CImageNdg & imgRef) {
+    double sum_A = 0, sum_B = 0;
+    double mean_A, mean_B;
+    double numerator = 0, denominator_A = 0, denominator_B = 0;
+    double correlation;
+
+    for (int i = 0; i < this->lireHauteur(); i++) {
+        for (int j = 0; j < this->lireLargeur(); j++) {
+            sum_A += this->operator()(i, j);
+            sum_B += imgRef(i, j);
+        }
+    }
+
+    mean_A = sum_A / (this->lireHauteur() * this->lireLargeur());
+    mean_B = sum_B / (imgRef.lireHauteur() * imgRef.lireLargeur());
+
+    for (int i = 0; i < this->lireHauteur(); i++) {
+        for (int j = 0; j < this->lireLargeur(); j++) {
+            double diff_A = this->operator()(i, j) - mean_A;
+            double diff_B = imgRef(i, j) - mean_B;
+
+            numerator += diff_A * diff_B;
+            denominator_A += diff_A * diff_A;
+            denominator_B += diff_B * diff_B;
+        }
+    }
+
+    correlation = numerator / (sqrt(denominator_A) * sqrt(denominator_B));
+    return correlation;
 }

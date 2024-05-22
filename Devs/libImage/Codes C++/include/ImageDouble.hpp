@@ -7,7 +7,7 @@
 #include <valarray>
 #include <vector>
 
-#include "ImageNdg.hpp"
+#include "../include/ImageNdg.hpp"
 
 typedef std::complex<double>   Complex;
 typedef std::valarray<Complex> CArray;
