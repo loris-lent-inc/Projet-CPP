@@ -723,6 +723,42 @@ CImageNdg CImageNdg::morphologie(const std::string methode, const std::string el
                 }
             }
         }
+        if (methode.compare("ouverture") == 0) {
+          
+            auto eros = this->morphologie("erosion", eltStructurant);
+            auto ouverture = eros.morphologie("dilatation", eltStructurant);
+
+            
+            ouverture.ecrireNom(this->lireNom() + "Mouv");
+
+            return ouverture;
+        }
+
+        if (methode.compare("fermeture") == 0) {
+           
+            auto eros = this->morphologie("erosion", eltStructurant);
+            auto fermeture = eros.morphologie("dilatation", eltStructurant);
+
+            fermeture.ecrireNom(this->lireNom() + "Mferm");
+
+            return fermeture;
+        }
+
+        if (methode.compare("BTH") == 0) {
+          
+            CImageNdg ouverture = this->morphologie("ouverture", eltStructurant);
+            CImageNdg bth = *this - ouverture;
+            bth.ecrireNom(this->lireNom() + "MBth");
+            return bth;
+        }
+
+        if (methode.compare("WTH") == 0) {
+           
+            CImageNdg fermeture = this->morphologie("fermeture", eltStructurant);
+            CImageNdg wth = fermeture - *this;
+            wth.ecrireNom(this->lireNom() + "Mwth");
+            return wth;
+        }
     }
 
     return out;
