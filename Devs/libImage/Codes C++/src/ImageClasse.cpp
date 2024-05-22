@@ -9,9 +9,12 @@
 #include <vector>
 
 #include "../include/ImageClasse.hpp"
+
 #include "../include/ImageDouble.hpp"
 
 #define MAGIC_NUMBER_BMP ('B' + ('M' << 8)) // signature bitmap windows
+
+
 
 // constructeurs et destructeur
 CImageClasse::CImageClasse()

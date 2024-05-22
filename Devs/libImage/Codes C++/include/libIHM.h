@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ImageClasse.hpp"
-#include "ImageNdg.hpp"
-#include "ImageCouleur.hpp"
-#include "ImageDouble.hpp"
+#include "../include/ImageClasse.hpp"
+#include "../include/ImageNdg.hpp"
+#include "../include/ImageCouleur.hpp"
+#include "../include/ImageDouble.hpp"
 
 class ClibIHM {
 
@@ -14,7 +14,7 @@ private:
 	// data n�cessaires � l'IHM donc fonction de l'application cibl�e
 	int						nbDataImg; // nb champs Texte de l'IHM
 	std::vector<double>		dataFromImg; // champs Texte de l'IHM
-	CImageCouleur*			imgPt;       // 
+	CImageCouleur*          imgPt; // 
 
 	///////////////////////////////////////
 public:

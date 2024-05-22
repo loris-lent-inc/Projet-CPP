@@ -90,7 +90,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBIMAGE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Hubert_KONIK\Enseignement\TSE FA\Projet C++\Exemple Wrapper Image Seuillage Auto\Codes C++\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\visual studio\Projet-CPP\Codes C++\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
