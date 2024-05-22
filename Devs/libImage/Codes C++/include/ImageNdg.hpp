@@ -6,37 +6,11 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include "windows.h"
 
 #define PI 3.14159265358979323846
 #define MAGIC_NUMBER_BMP ('B' + ('M' << 8))
 
-typedef unsigned short WORD;
-typedef unsigned int   DWORD;
-typedef unsigned long  LONG;
-
-typedef struct tagBITMAPFILEHEADER
-{
-    WORD  bfType      = 0;
-    DWORD bfSize      = 0;
-    WORD  bfReserved1 = 0;
-    WORD  bfReserved2 = 0;
-    DWORD bfOffBits   = 0;
-} BITMAPFILEHEADER;
-
-typedef struct tagBITMAPINFOHEADER
-{
-    DWORD biSize          = 0;
-    LONG  biWidth         = 0;
-    LONG  biHeight        = 0;
-    WORD  biPlanes        = 0;
-    WORD  biBitCount      = 0;
-    DWORD biCompression   = 0;
-    DWORD biSizeImage     = 0;
-    LONG  biXPelsPerMeter = 0;
-    LONG  biYPelsPerMeter = 0;
-    DWORD biClrUsed       = 0;
-    DWORD biClrImportant  = 0;
-} BITMAPINFOHEADER;
 
 typedef struct
 {

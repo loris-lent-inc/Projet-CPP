@@ -8,7 +8,7 @@
 #include <ctime>
 #include <stack>
 
-#include "libIHM.h"
+#include "../include/libIHM.h"
 
 ClibIHM::ClibIHM() {
 

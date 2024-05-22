@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "ImageDouble.hpp"
+#include "../include/ImageDouble.hpp"
 
 #define PI 3.14159265358979323846
 
@@ -237,16 +237,16 @@ CImageDouble CImageDouble::distance(std::string eltStructurant, double valBord)
             for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
             {
                 double pixel   = agrandie(i, j);
-                pixel          = std::min(pixel, agrandie(i - 1, j) + 1);
-                pixel          = std::min(pixel, agrandie(i, j - 1) + 1);
+                pixel          = min(pixel, agrandie(i - 1, j) + 1);
+                pixel          = min(pixel, agrandie(i, j - 1) + 1);
                 agrandie(i, j) = pixel;
             }
         for (int i = agrandie.lireHauteur() - 2; i >= 1; i--)
             for (int j = agrandie.lireLargeur() - 2; j >= 1; j--)
             {
                 double pixel   = agrandie(i, j);
-                pixel          = std::min(pixel, agrandie(i + 1, j) + 1);
-                pixel          = std::min(pixel, agrandie(i, j + 1) + 1);
+                pixel          = min(pixel, agrandie(i + 1, j) + 1);
+                pixel          = min(pixel, agrandie(i, j + 1) + 1);
                 agrandie(i, j) = pixel;
             }
         // conservation du centre
@@ -263,20 +263,20 @@ CImageDouble CImageDouble::distance(std::string eltStructurant, double valBord)
             for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
             {
                 double pixel   = agrandie(i, j);
-                pixel          = std::min(pixel, agrandie(i - 1, j) + 1);
-                pixel          = std::min(pixel, agrandie(i, j - 1) + 1);
-                pixel          = std::min(pixel, agrandie(i - 1, j - 1) + 1);
-                pixel          = std::min(pixel, agrandie(i - 1, j + 1) + 1);
+                pixel          = min(pixel, agrandie(i - 1, j) + 1);
+                pixel          = min(pixel, agrandie(i, j - 1) + 1);
+                pixel          = min(pixel, agrandie(i - 1, j - 1) + 1);
+                pixel          = min(pixel, agrandie(i - 1, j + 1) + 1);
                 agrandie(i, j) = pixel;
             }
         for (int i = agrandie.lireHauteur() - 2; i >= 1; i--)
             for (int j = agrandie.lireLargeur() - 2; j >= 1; j--)
             {
                 double pixel   = agrandie(i, j);
-                pixel          = std::min(pixel, agrandie(i + 1, j) + 1);
-                pixel          = std::min(pixel, agrandie(i, j + 1) + 1);
-                pixel          = std::min(pixel, agrandie(i + 1, j + 1) + 1);
-                pixel          = std::min(pixel, agrandie(i + 1, j - 1) + 1);
+                pixel          = min(pixel, agrandie(i + 1, j) + 1);
+                pixel          = min(pixel, agrandie(i, j + 1) + 1);
+                pixel          = min(pixel, agrandie(i + 1, j + 1) + 1);
+                pixel          = min(pixel, agrandie(i + 1, j - 1) + 1);
                 agrandie(i, j) = pixel;
             }
         // conservation du centre
@@ -328,7 +328,7 @@ CImageNdg CImageDouble::toNdg(const std::string & methode)
 CImageDouble CImageDouble::planHough()
 {
 
-    double hough_h = std::max(this->lireHauteur() / 2, this->lireLargeur() / 2) * sqrt(2.0);
+    double hough_h = max(this->lireHauteur() / 2, this->lireLargeur() / 2) * sqrt(2.0);
 
     CImageDouble H((int)(hough_h * 2), 180);
     H.ecrireMin(0);
@@ -513,7 +513,7 @@ CImageNdg CImageDouble::houghInverse(const CImageNdg & img)
     HI.ecrireNom(img.lireNom() + "HI");
     HI.choixPalette(img.lirePalette());
 
-    double hough_h = std::max(img.lireHauteur() / 2, img.lireLargeur() / 2) * sqrt(2.0);
+    double hough_h = max(img.lireHauteur() / 2, img.lireLargeur() / 2) * sqrt(2.0);
 
     double cx      = img.lireLargeur() / 2;
     double cy      = img.lireHauteur() / 2;
