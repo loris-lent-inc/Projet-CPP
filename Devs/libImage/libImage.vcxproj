@@ -104,7 +104,8 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;LIBIMAGE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Codes C++\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -147,18 +148,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Codes C++\src\ImageClasse.cpp" />
-    <ClCompile Include="..\..\Codes C++\src\ImageCouleur.cpp" />
-    <ClCompile Include="..\..\Codes C++\src\ImageDouble.cpp" />
-    <ClCompile Include="..\..\Codes C++\src\ImageNdg.cpp" />
-    <ClCompile Include="..\..\Codes C++\src\libIHM.cpp" />
+    <ClCompile Include="Codes C++\src\ImageClasse.cpp" />
+    <ClCompile Include="Codes C++\src\ImageCouleur.cpp" />
+    <ClCompile Include="Codes C++\src\ImageDouble.cpp" />
+    <ClCompile Include="Codes C++\src\ImageNdg.cpp" />
+    <ClCompile Include="Codes C++\src\libIHM.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Codes C++\include\ImageClasse.hpp" />
-    <ClInclude Include="..\..\Codes C++\include\ImageCouleur.hpp" />
-    <ClInclude Include="..\..\Codes C++\include\ImageDouble.hpp" />
-    <ClInclude Include="..\..\Codes C++\include\ImageNdg.hpp" />
-    <ClInclude Include="..\..\Codes C++\include\libIHM.h" />
+    <ClInclude Include="Codes C++\include\ImageClasse.hpp" />
+    <ClInclude Include="Codes C++\include\ImageCouleur.hpp" />
+    <ClInclude Include="Codes C++\include\ImageDouble.hpp" />
+    <ClInclude Include="Codes C++\include\ImageNdg.hpp" />
+    <ClInclude Include="Codes C++\include\libIHM.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

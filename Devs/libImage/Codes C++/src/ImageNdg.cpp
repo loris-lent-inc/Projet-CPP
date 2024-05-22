@@ -1016,3 +1016,34 @@ _EXPORT_ CImageNdg CImageNdg::verticalConcatenate(const CImageNdg & im)
 
     return res;
 }
+
+_EXPORT_ double CImageNdg::correlation_croisee_normalisee(const CImageNdg & imgRef) {
+    double sum_A = 0, sum_B = 0;
+    double mean_A, mean_B;
+    double numerator = 0, denominator_A = 0, denominator_B = 0;
+    double correlation;
+
+    for (int i = 0; i < this->lireHauteur(); i++) {
+        for (int j = 0; j < this->lireLargeur(); j++) {
+            sum_A += this->operator()(i, j);
+            sum_B += imgRef(i, j);
+        }
+    }
+
+    mean_A = sum_A / (this->lireHauteur() * this->lireLargeur());
+    mean_B = sum_B / (imgRef.lireHauteur() * imgRef.lireLargeur());
+
+    for (int i = 0; i < this->lireHauteur(); i++) {
+        for (int j = 0; j < this->lireLargeur(); j++) {
+            double diff_A = this->operator()(i, j) - mean_A;
+            double diff_B = imgRef(i, j) - mean_B;
+
+            numerator += diff_A * diff_B;
+            denominator_A += diff_A * diff_A;
+            denominator_B += diff_B * diff_B;
+        }
+    }
+
+    correlation = numerator / (sqrt(denominator_A) * sqrt(denominator_B));
+    return correlation;
+}

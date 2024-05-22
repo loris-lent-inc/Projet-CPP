@@ -316,6 +316,8 @@ public:
     _EXPORT_ CImageNdg horizontalConcatenate(const CImageNdg & im);
     _EXPORT_ CImageNdg verticalConcatenate(const CImageNdg & im);
 
+    _EXPORT_ double correlation_croisee_normalisee(const CImageNdg& imgRef);
+
 };
 
 #endif // _IMAGE_NDG_
