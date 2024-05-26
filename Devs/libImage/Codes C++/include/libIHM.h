@@ -23,7 +23,7 @@ public:
 	// constructeurs
 	_declspec(dllexport) ClibIHM(); // par d�faut
 
-	_declspec(dllexport) ClibIHM(int nbChamps, byte* data, int stride, int nbLig, int nbCol); // par image format bmp C#
+	_declspec(dllexport) ClibIHM(int nbChamps, byte* data, byte* refIm, int stride, int nbLig, int nbCol); // par image format bmp C#
 
 	_declspec(dllexport) ~ClibIHM();
 
@@ -49,9 +49,9 @@ extern "C" _declspec(dllexport) ClibIHM* objetLib()
 	return pImg;
 }
 
-extern "C" _declspec(dllexport) ClibIHM* objetLibDataImg(int nbChamps, byte* data, int stride, int nbLig, int nbCol)
+extern "C" _declspec(dllexport) ClibIHM* objetLibDataImg(int nbChamps, byte* data, byte *refIm, int stride, int nbLig, int nbCol)
 {
-	ClibIHM* pImg = new ClibIHM(nbChamps,data,stride,nbLig,nbCol);
+	ClibIHM* pImg = new ClibIHM(nbChamps,data, refIm, stride,nbLig,nbCol);
 	return pImg;
 }
 

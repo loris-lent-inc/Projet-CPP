@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include "windows.h"
+#include "../include/elemStruct.h"
 
 #define PI 3.14159265358979323846
 #define MAGIC_NUMBER_BMP ('B' + ('M' << 8))
@@ -43,6 +44,25 @@ private:
 
     unsigned char * m_pucPalette;
 
+
+
+    // Propagation du produit de convolution local pour la convolution globale
+    _EXPORT_ double convolution(int x, int y, const elemStruct& eltStructurant)const;
+    // Propagation du min local pour l'érosion
+    _EXPORT_ double erosion(int x, int y, const elemStruct& eltStructurant)const;
+    // Propagation du max local pour la dilatation
+    _EXPORT_ double dilatation(int x, int y, const elemStruct& eltStructurant)const;
+    // Propagation de la moyenne locale pour le filtrage
+    _EXPORT_ double moyenne(int x, int y, const elemStruct& eltStructurant)const;
+    // Propagation de la médiane locale pour le filtrage
+    _EXPORT_ double median(int x, int y, const elemStruct& eltStructurant)const;
+
+    // morphologie avancée
+    // méthode options : "erosion", "dilatation", convolution
+    // élément structurant elemStruct
+    _EXPORT_ CImageNdg morphologie_base(double (CImageNdg::* operation)(int, int, const elemStruct&) const = &dilatation, const elemStruct& eltStructurant = elemStruct::V8(), unsigned int nbIterations = 1) const;
+
+
 public:
     // constructeurs
     _EXPORT_ CImageNdg();                                       // par defaut
@@ -59,13 +79,16 @@ public:
     // pouvoir acceder e un pixel par image(i)
     _EXPORT_ unsigned char & operator()(int i) const
     {
-        return m_pucPixel[i];
+        int ti = max(0, min(i, m_iHauteur * m_iLargeur - 1));
+        return m_pucPixel[ti];
     }
 
     // pouvoir acceder e un pixel par image(i,j)
     _EXPORT_ unsigned char & operator()(int i, int j) const
     {
-        return m_pucPixel[i * m_iLargeur + j];
+        int ti = max(0, min(i, m_iHauteur - 1));
+        int tj = max(0, min(j, m_iLargeur - 1));
+        return this->operator()(ti * m_iLargeur + tj);
     }
 
     // pouvoir acceder e un pixel par image(i,j)
@@ -277,10 +300,12 @@ public:
     _EXPORT_ CImageNdg transformation(const std::string methode = "complement");
 
     // morphologie
-    // methode options : "erosion", "dilatation"
-    // element structurant options : "V4" ou "V8"
-    _EXPORT_ CImageNdg morphologie(const std::string methode = "dilatation", const std::string eltStructurant = "V8");
+    // méthode options : "erosion", "dilatation"
+    // élément structurant options : "V4" ou "V8"
+    _EXPORT_ CImageNdg morphologie(const std::string methode = "dilatation", const elemStruct& eltStructurant = elemStruct::V8());
 
+    // Filtrage
+    // options : "moyennage", "median"
     _EXPORT_ CImageNdg filtrage(const std::string & methode = "moyennage", int Ni = 3,
                                 int Nj = 3); // choix "moyennage" / "median"
 

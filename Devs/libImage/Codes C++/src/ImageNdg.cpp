@@ -175,7 +175,7 @@ void CImageNdg::sauvegarde(const std::string file)
 
     if (this->m_pucPixel)
     {
-        std::string nomFichier = "res/";
+        std::string nomFichier = "C:/Users/loris/Google Drive/IPSI2/PCP/Projet-CPP/Devs/libImage/Codes C++/res/";
         if (!file.empty())
             nomFichier += file + ".bmp";
         else
@@ -582,7 +582,7 @@ CImageNdg CImageNdg::transformation(const std::string methode)
 }
 
 // morphologie
-CImageNdg CImageNdg::morphologie(const std::string methode, const std::string eltStructurant)
+CImageNdg CImageNdg::morphologie(const std::string methode, const elemStruct& eltStructurant)
 {
 
     CImageNdg out(this->lireHauteur(), this->lireLargeur());
@@ -593,8 +593,9 @@ CImageNdg CImageNdg::morphologie(const std::string methode, const std::string el
 
     if (methode.compare("erosion") == 0)
     {
+        out = this->morphologie_base(&CImageNdg::erosion, eltStructurant);
         out.m_sNom = this->lireNom() + "MEr";
-        CImageNdg agrandie(this->lireHauteur() + 2, this->lireLargeur() + 2);
+        /*CImageNdg agrandie(this->lireHauteur() + 2, this->lireLargeur() + 2);
 
         // gestion des bords
         if (this->lireBinaire())
@@ -663,37 +664,49 @@ CImageNdg CImageNdg::morphologie(const std::string methode, const std::string el
                         out(i - 1, j - 1) = min(minV8, (int)agrandie(i, j));
                     }
             }
-        }
+        }*/
     }
-    else
+    else if (methode.compare("dilatation") == 0)
     {
-        if (methode.compare("dilatation") == 0)
+        out = this->morphologie_base(&CImageNdg::dilatation, eltStructurant);
+        out.m_sNom = this->lireNom() + "MDi";
+        /*CImageNdg agrandie(this->lireHauteur() + 2, this->lireLargeur() + 2);
+
+        // gestion des bords
+        int pix;
+
+        for (pix = 0; pix < agrandie.lireLargeur(); pix++)
         {
-            out.m_sNom = this->lireNom() + "MDi";
-            CImageNdg agrandie(this->lireHauteur() + 2, this->lireLargeur() + 2);
+            agrandie(0, pix)                          = 0;
+            agrandie(agrandie.lireHauteur() - 1, pix) = 0;
+        }
+        for (pix = 1; pix < agrandie.lireHauteur() - 1; pix++)
+        {
+            agrandie(pix, 0)                          = 0;
+            agrandie(pix, agrandie.lireLargeur() - 1) = 0;
+        }
 
-            // gestion des bords
-            int pix;
-
-            for (pix = 0; pix < agrandie.lireLargeur(); pix++)
+        // gestion du coeur
+        for (int i = 0; i < this->lireHauteur(); i++)
+            for (int j = 0; j < this->lireLargeur(); j++)
             {
-                agrandie(0, pix)                          = 0;
-                agrandie(agrandie.lireHauteur() - 1, pix) = 0;
-            }
-            for (pix = 1; pix < agrandie.lireHauteur() - 1; pix++)
-            {
-                agrandie(pix, 0)                          = 0;
-                agrandie(pix, agrandie.lireLargeur() - 1) = 0;
+                agrandie(i + 1, j + 1) = this->operator()(i, j);
             }
 
-            // gestion du coeur
-            for (int i = 0; i < this->lireHauteur(); i++)
-                for (int j = 0; j < this->lireLargeur(); j++)
+        if (eltStructurant.compare("V4") == 0)
+        {
+            for (int i = 1; i < agrandie.lireHauteur() - 1; i++)
+                for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
                 {
-                    agrandie(i + 1, j + 1) = this->operator()(i, j);
+                    int maxH          = max(agrandie(i, j - 1), agrandie(i, j + 1));
+                    int maxV          = max(agrandie(i - 1, j), agrandie(i + 1, j));
+                    int maxV4         = max(maxH, maxV);
+                    out(i - 1, j - 1) = max(maxV4, (int)agrandie(i, j));
                 }
-
-            if (eltStructurant.compare("V4") == 0)
+        }
+        else
+        {
+            if (eltStructurant.compare("V8") == 0)
             {
                 for (int i = 1; i < agrandie.lireHauteur() - 1; i++)
                     for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
@@ -701,67 +714,140 @@ CImageNdg CImageNdg::morphologie(const std::string methode, const std::string el
                         int maxH          = max(agrandie(i, j - 1), agrandie(i, j + 1));
                         int maxV          = max(agrandie(i - 1, j), agrandie(i + 1, j));
                         int maxV4         = max(maxH, maxV);
-                        out(i - 1, j - 1) = max(maxV4, (int)agrandie(i, j));
+                        int maxD1         = max(agrandie(i - 1, j - 1), agrandie(i + 1, j + 1));
+                        int maxD2         = max(agrandie(i - 1, j + 1), agrandie(i + 1, j - 1));
+                        int maxD          = max(maxD1, maxD2);
+                        int maxV8         = max(maxV4, maxD);
+                        out(i - 1, j - 1) = max(maxV8, (int)agrandie(i, j));
                     }
             }
-            else
-            {
-                if (eltStructurant.compare("V8") == 0)
-                {
-                    for (int i = 1; i < agrandie.lireHauteur() - 1; i++)
-                        for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
-                        {
-                            int maxH          = max(agrandie(i, j - 1), agrandie(i, j + 1));
-                            int maxV          = max(agrandie(i - 1, j), agrandie(i + 1, j));
-                            int maxV4         = max(maxH, maxV);
-                            int maxD1         = max(agrandie(i - 1, j - 1), agrandie(i + 1, j + 1));
-                            int maxD2         = max(agrandie(i - 1, j + 1), agrandie(i + 1, j - 1));
-                            int maxD          = max(maxD1, maxD2);
-                            int maxV8         = max(maxV4, maxD);
-                            out(i - 1, j - 1) = max(maxV8, (int)agrandie(i, j));
-                        }
-                }
-            }
-        }
-        if (methode.compare("ouverture") == 0) {
+        }*/
+    }
+    else if (methode.compare("ouverture") == 0) {
           
-            auto eros = this->morphologie("erosion", eltStructurant);
-            auto ouverture = eros.morphologie("dilatation", eltStructurant);
+        out = this->morphologie_base(&CImageNdg::erosion, eltStructurant).morphologie_base(&CImageNdg::dilatation, eltStructurant);
+        out.ecrireNom(this->lireNom() + "Mouv");
+    }
 
-            
-            ouverture.ecrireNom(this->lireNom() + "Mouv");
-
-            return ouverture;
-        }
-
-        if (methode.compare("fermeture") == 0) {
+    else if (methode.compare("fermeture") == 0) {
            
-            auto eros = this->morphologie("erosion", eltStructurant);
-            auto fermeture = eros.morphologie("dilatation", eltStructurant);
+        out = this->morphologie_base(&CImageNdg::dilatation, eltStructurant).morphologie_base(&CImageNdg::erosion, eltStructurant);
+        out.ecrireNom(this->lireNom() + "Mouv");
+    }
 
-            fermeture.ecrireNom(this->lireNom() + "Mferm");
-
-            return fermeture;
-        }
-
-        if (methode.compare("BTH") == 0) {
+    else if (methode.compare("BTH") == 0) {
           
-            CImageNdg ouverture = this->morphologie("ouverture", eltStructurant);
-            CImageNdg bth = *this - ouverture;
-            bth.ecrireNom(this->lireNom() + "MBth");
-            return bth;
-        }
+        CImageNdg ouverture = this->morphologie("ouverture", eltStructurant);
+        out = *this - ouverture;
+        out.ecrireNom(this->lireNom() + "MBth");
+    }
 
-        if (methode.compare("WTH") == 0) {
+    else if (methode.compare("WTH") == 0) {
            
-            CImageNdg fermeture = this->morphologie("fermeture", eltStructurant);
-            CImageNdg wth = fermeture - *this;
-            wth.ecrireNom(this->lireNom() + "Mwth");
-            return wth;
-        }
+        CImageNdg fermeture = this->morphologie("fermeture", eltStructurant);
+        out = fermeture - *this;
+        out.ecrireNom(this->lireNom() + "Mwth");
+    }
+
+    else if (methode.compare("moyenne")) {
+		out = this->morphologie_base(&CImageNdg::moyenne, eltStructurant);
+		out.ecrireNom(this->lireNom() + "Moy");
+	}
+
+    else if (methode.compare("median")) {
+        out = this->morphologie_base(&CImageNdg::median, eltStructurant);
+        out.ecrireNom(this->lireNom() + "Med");
     }
 
     return out;
+}
+
+// convolution
+double CImageNdg::convolution(int x, int y, const elemStruct& eltStructurant) const{
+    double somme = 0;
+    int deltaX = eltStructurant.lireHauteur() / 2;
+    int deltaY = eltStructurant.lireLargeur() / 2;
+
+    for (int i = 0; i < eltStructurant.lireHauteur(); i++)
+        for (int j = 0; j < eltStructurant.lireLargeur(); j++)
+            somme += eltStructurant(i, j) * (*this)(x + i - deltaX, y + j - deltaY);
+
+    return somme;
+}
+
+double CImageNdg::erosion(int x, int y, const elemStruct& eltStructurant) const{
+    double min_val = DBL_MAX;
+    int deltaX = eltStructurant.lireHauteur() / 2;
+    int deltaY = eltStructurant.lireLargeur() / 2;
+
+    for (int i = 0; i < eltStructurant.lireHauteur(); i++)
+        for (int j = 0; j < eltStructurant.lireLargeur(); j++)
+            if (eltStructurant(i, j) != 0)
+                min_val = min(min_val, (*this)(x + i - deltaX, y + j - deltaY));
+
+    return min_val;
+}
+
+double CImageNdg::dilatation(int x, int y, const elemStruct& eltStructurant) const{
+    double max_val = DBL_MIN;
+    int deltaX = eltStructurant.lireHauteur() / 2;
+    int deltaY = eltStructurant.lireLargeur() / 2;
+
+    for (int i = 0; i < eltStructurant.lireHauteur(); i++)
+        for (int j = 0; j < eltStructurant.lireLargeur(); j++)
+            if (eltStructurant(i, j) != 0)
+                max_val = max(max_val, (*this)(x + i - deltaX, y + j - deltaY));
+
+    return max_val;
+}
+
+double CImageNdg::moyenne(int x, int y, const elemStruct& eltStructurant) const {
+	double somme = 0;
+	int deltaX = eltStructurant.lireHauteur() / 2;
+	int deltaY = eltStructurant.lireLargeur() / 2;
+
+	for (int i = 0; i < eltStructurant.lireHauteur(); i++)
+		for (int j = 0; j < eltStructurant.lireLargeur(); j++)
+			somme += eltStructurant(i, j) * (*this)(x + i - deltaX, y + j - deltaY);
+
+	return somme / (eltStructurant.lireHauteur() * eltStructurant.lireLargeur());
+}
+
+double CImageNdg::median(int x, int y, const elemStruct& eltStructurant) const {
+	std::vector<int> voisinage;
+
+	int deltaX = eltStructurant.lireHauteur() / 2;
+	int deltaY = eltStructurant.lireLargeur() / 2;
+
+	for (int i = 0; i < eltStructurant.lireHauteur(); i++)
+		for (int j = 0; j < eltStructurant.lireLargeur(); j++)
+			voisinage.push_back((*this)(x + i - deltaX, y + j - deltaY));
+
+	std::sort(voisinage.begin(), voisinage.end());
+
+	return voisinage[voisinage.size() / 2];
+}
+
+CImageNdg CImageNdg::morphologie_base(double (CImageNdg::* operation)(int, int, const elemStruct&) const, const elemStruct& eltStructurant, unsigned int nbIterations) const{
+
+    CImageNdg out(this->lireHauteur(), this->lireLargeur());
+
+    out.choixPalette(this->lirePalette()); // conservation de la palette
+    out.m_bBinaire = this->m_bBinaire; // conservation du type
+
+    // convolution
+    for (int i = 0; i < this->lireHauteur(); i++) {
+        for (int j = 0; j < this->lireLargeur(); j++) {
+            out(i, j) = (this->*operation)(i, j, eltStructurant);
+        }
+    }
+
+    if (nbIterations <= 1) {
+		return out;
+	}
+    else {
+		return out.morphologie_base(operation, eltStructurant, nbIterations - 1);
+	}
 }
 
 CImageNdg CImageNdg::filtrage(const std::string & methode, int Ni, int Nj)
@@ -1071,8 +1157,8 @@ _EXPORT_ double CImageNdg::correlation_croisee_normalisee(const CImageNdg & imgR
 
     for (int i = 0; i < this->lireHauteur(); i++) {
         for (int j = 0; j < this->lireLargeur(); j++) {
-            double diff_A = this->operator()(i, j) - mean_A;
-            double diff_B = imgRef(i, j) - mean_B;
+            double diff_A = abs(this->operator()(i, j) - mean_A);
+            double diff_B = abs(imgRef(i, j) - mean_B);
 
             numerator += diff_A * diff_B;
             denominator_A += diff_A * diff_A;

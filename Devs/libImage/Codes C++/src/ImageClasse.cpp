@@ -1838,7 +1838,7 @@ void CImageClasse::cerclesComposantesConnexes(const std::vector<SIGNATURE_Forme>
     CImageNdg temp = this->toNdg();
     //CImageNdg erod = temp.morphologie("erosion", "V8");
     //CImageNdg contours_interne = temp - erod;
-    CImageNdg dilat = temp.morphologie("dilatation", "V8");
+    CImageNdg dilat = temp.morphologie("dilatation", elemStruct::V8());
     CImageNdg contours_externe = dilat - temp; // le coutour externe donne un rendu plus précis
 
     //contours_externe.sauvegarde("contours_externe");
