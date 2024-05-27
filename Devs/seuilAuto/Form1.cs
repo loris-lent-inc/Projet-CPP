@@ -15,6 +15,7 @@ using libImage;
 using static System.Windows.Forms.AxHost;
 using System.Threading;
 using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace seuilAuto
 {
@@ -23,7 +24,8 @@ namespace seuilAuto
         double moyenne = 0, mediane = 0, currentScore = 0;
         bool run = false;
         List<Image> images;
-        List<Image> imagesTraitees;
+        List<Image> imagesPost = new List<Image>();
+        List<Image> imagesTraitees = new List<Image>();
         int position = 0;
 
         public enum State
@@ -43,8 +45,6 @@ namespace seuilAuto
             InitializeComponent();
             processState(State.INIT);
         }
-
-
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -78,16 +78,27 @@ namespace seuilAuto
         private void button3_Click(object sender, EventArgs e)
         {
             processState(State.RUN_STOP);
+            
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            // bouton pour sauvegarder l'image (laquelle ?)
-            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            // dossier de destination
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
+                // chemin du dossier sélectionné
+                string selectedPath = folderBrowserDialog.SelectedPath;
 
-            }
+                // chemins des dossiers pour les images PRE et POST
+                string preFilePath = Path.Combine(selectedPath, "PreImages");
+                string postFilePath = Path.Combine(selectedPath, "PostImages");
+
+                saveImage(images,imagesTraitees,preFilePath,postFilePath);
+
+                MessageBox.Show("Images sauvegardées avec succès!");
+             }
+            
         }
 
         private void loadFirst()
@@ -160,6 +171,7 @@ namespace seuilAuto
                 BMP.UnlockBits(bmpData);
             }
 
+            
             pictureBoxPOST.Image = BMP;
 
             labelNumero.Text = (position + 1) + "/" + images.Count;
@@ -175,6 +187,7 @@ namespace seuilAuto
 
             }
             preBoxes[0].Image = pictureBoxPRE.Image;
+            imagesPost.Add(preBoxes[0].Image);
 
             for (int i = postBoxes.Length - 1; i > 0; i--)
             {
@@ -185,6 +198,7 @@ namespace seuilAuto
 
             }
             postBoxes[0].Image = pictureBoxPOST.Image;
+            imagesTraitees.Add(postBoxes[0].Image);
 
             position++;
             if (position >= images.Count)
@@ -234,6 +248,53 @@ namespace seuilAuto
                     button4.Enabled = true;
                     break;
             }
+
+            
         }
+
+        private void saveImage(List<Image> post, List<Image> pre, string pathPre, string pathPost)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                //string selectedPath = folderBrowserDialog.SelectedPath;
+                //string imgTraitees = Path.Combine(selectedPath, "ImgPOST");
+
+                // création dossier pour images PRE et images POST
+                if (!Directory.Exists(pathPre))
+                {
+                    Directory.CreateDirectory(pathPre);
+                }
+                if (!Directory.Exists(pathPost))
+                {
+                    Directory.CreateDirectory(pathPost);
+                }
+
+                // enregistrement des img
+                for (int i = 0; i < pre.Count; i++)
+                {
+                    string fileName = timeFileName("PRE", i);
+                    string filePath = Path.Combine(pathPre, fileName);
+                    pre[i].Save(filePath, ImageFormat.Bmp);
+                }
+
+                for (int i = 0; i < post.Count; i++)
+                {
+                    string fileName = timeFileName("POST", i);
+                    string filePath = Path.Combine(pathPost, fileName);
+                    post[i].Save(filePath, ImageFormat.Bmp);
+                }
+
+                MessageBox.Show("Images enregistrées avec succès!");
+            }
+        }
+
+
+        private string timeFileName(string nomImg, int index)
+        {
+            return $"{nomImg}_{index + 1}_{DateTime.Now:yyyy-MM-dd_HH-mm}.bmp";
+        }
+
+
     }
 }

@@ -71,8 +71,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.last10table = new System.Windows.Forms.TableLayoutPanel();
-            this.pictureBoxPOST1 = new System.Windows.Forms.PictureBox();
             this.pictureBoxPOST2 = new System.Windows.Forms.PictureBox();
+            this.pictureBoxPOST1 = new System.Windows.Forms.PictureBox();
             this.pictureBoxPOST3 = new System.Windows.Forms.PictureBox();
             this.pictureBoxPOST4 = new System.Windows.Forms.PictureBox();
             this.pictureBoxPOST5 = new System.Windows.Forms.PictureBox();
@@ -98,8 +98,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPRE9)).BeginInit();
             this.tableLayoutPanel3.SuspendLayout();
             this.last10table.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPOST1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPOST2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPOST1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPOST3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPOST4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPOST5)).BeginInit();
@@ -579,16 +579,6 @@
             this.last10table.Size = new System.Drawing.Size(1234, 261);
             this.last10table.TabIndex = 9;
             // 
-            // pictureBoxPOST1
-            // 
-            this.pictureBoxPOST1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBoxPOST1.Location = new System.Drawing.Point(4, 162);
-            this.pictureBoxPOST1.Name = "pictureBoxPOST1";
-            this.pictureBoxPOST1.Size = new System.Drawing.Size(116, 95);
-            this.pictureBoxPOST1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxPOST1.TabIndex = 20;
-            this.pictureBoxPOST1.TabStop = false;
-            // 
             // pictureBoxPOST2
             // 
             this.pictureBoxPOST2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -598,6 +588,16 @@
             this.pictureBoxPOST2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxPOST2.TabIndex = 21;
             this.pictureBoxPOST2.TabStop = false;
+            // 
+            // pictureBoxPOST1
+            // 
+            this.pictureBoxPOST1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBoxPOST1.Location = new System.Drawing.Point(4, 162);
+            this.pictureBoxPOST1.Name = "pictureBoxPOST1";
+            this.pictureBoxPOST1.Size = new System.Drawing.Size(116, 95);
+            this.pictureBoxPOST1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxPOST1.TabIndex = 20;
+            this.pictureBoxPOST1.TabStop = false;
             // 
             // pictureBoxPOST3
             // 
@@ -743,8 +743,8 @@
             this.tableLayoutPanel3.PerformLayout();
             this.last10table.ResumeLayout(false);
             this.last10table.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPOST1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPOST2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPOST1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPOST3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPOST4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPOST5)).EndInit();
