@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -51,22 +52,6 @@ namespace seuilAuto
         private void button1_Click(object sender, EventArgs e)
         {
             images = LoadBmpImages();
-            //Bitmap bmp = new Bitmap("C:\\Users\\loris\\Downloads\\images projet\\Source Images - bmp\\Test.bmp");
-            //ClImage Img = new ClImage();
-
-            //unsafe
-            //{
-            //    BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-            //    Img.objetLibDataImgPtr(1, bmpData.Scan0, bmpData.Stride, bmp.Height, bmp.Width);
-            //    // 1 champ texte retour C++, le seuil auto
-            //    bmp.UnlockBits(bmpData);
-            //}
-
-            //images = new List<Image>();
-            //images.Add(bmp);
-            //images.Add(bmp);
-            //images.Add(bmp);
-            //images.Add(bmp);
             loadFirst();
             processState(State.READY);
         }
@@ -112,6 +97,7 @@ namespace seuilAuto
             position = 0;
             pictureBoxPRE.Image = images[position].Item1;
             labelNumero.Text = (position + 1) + "/" + images.Count;
+            labelFichier.Text = titres[position];
         }
 
         public List<Tuple<Image, Image>> LoadBmpImages()
@@ -186,6 +172,9 @@ namespace seuilAuto
             Bitmap sourceBMP = new Bitmap(old);
             Bitmap GTBMP = new Bitmap(images[position].Item2);
             ClImage Img = new ClImage();
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             unsafe
             {
                 BitmapData sourceBMPData = sourceBMP.LockBits(new Rectangle(0, 0, sourceBMP.Width, sourceBMP.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
@@ -193,9 +182,13 @@ namespace seuilAuto
                 Img.objetLibDataImgPtr(5, sourceBMPData.Scan0, GTbmpData.Scan0, sourceBMPData.Stride, sourceBMP.Height, sourceBMP.Width);
                 // 1 champ texte retour C++, le seuil auto
                 sourceBMP.UnlockBits(sourceBMPData);
+                GTBMP.UnlockBits(GTbmpData);
             }
+            stopwatch.Stop();
+            TimeSpan elapsedTime = stopwatch.Elapsed;
 
             pictureBoxPOST.Image = sourceBMP;
+            labelTemps.Text = $"{elapsedTime.TotalSeconds:F2}s";
             currentScore = (int)(100 * Math.Max(Img.objetLibValeurChamp(3), Img.objetLibValeurChamp(4)));//(int)(100 * Math.Sqrt(Img.objetLibValeurChamp(3) * Img.objetLibValeurChamp(4)));
             somme += currentScore;
             moyenne = somme/(position+1);
@@ -236,7 +229,7 @@ namespace seuilAuto
                 }
 
             }
-            scores[0].Text = labelScore.Text;
+            scores[0].Text = labelScore.Text + " (" + labelTemps.Text + ")";
 
 
             position++;
