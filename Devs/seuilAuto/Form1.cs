@@ -204,7 +204,7 @@ namespace seuilAuto
             if (position >= images.Count)
             {
                 position = 0;
-                processState(State.READY);
+                processState(State.RUN_STOP);
                 //loadFirst();
                 return;
             }
