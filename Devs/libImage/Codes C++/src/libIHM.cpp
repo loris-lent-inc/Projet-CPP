@@ -52,19 +52,19 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, byte* refIm, int stride, int nbLig, i
 
 	// TRAITEMENT
 	
-	auto D17 = elemStruct::disque(17, 1);
+	//ref.sauvegarde("ref");
+	auto D17 = elemStruct::disque(8, 1);
 	CImageNdg wth = img.morphologie("WTH", D17);
-	CImageNdg bth = img.morphologie("median", elemStruct::disque(11, 1)).morphologie("BTH", D17);
+	CImageNdg bth = img.morphologie("median", elemStruct::disque(5, 1)).morphologie("BTH", D17);
 	CImageNdg sso = img.seuillage();
 
 	double scoreWTH = wth.correlation_croisee_normalisee(ref);
 	double scoreBTH = bth.correlation_croisee_normalisee(ref);
 	double scoreSSO = sso.correlation_croisee_normalisee(ref);
-	ref.sauvegarde("ref");
 
 	wth.seuillage().sauvegarde("wth" + std::to_string(scoreWTH));
 	bth.seuillage().sauvegarde("bth" + std::to_string(scoreBTH));
-	sso.sauvegarde("ss" + std::to_string(scoreSSO));
+	//sso.sauvegarde("ss" + std::to_string(scoreSSO));
 
 	CImageNdg bst = sso;
 	double bestScore = scoreSSO;
@@ -81,10 +81,13 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, byte* refIm, int stride, int nbLig, i
 	CImageClasse imgSeuil = CImageClasse(bst, "V4");
 	CImageClasse refClass = CImageClasse(ref, "V4");
 
+	imgSeuil = imgSeuil.filtrage("taille", 100, true);
+
 	double scoreIOU = imgSeuil.IOU(refClass);
 	double scoreVinet = imgSeuil.Vinet(refClass);
 	
 	out = CImageCouleur(imgSeuil.toNdg("expansion"));
+	out.plan().sauvegarde();
 	
 	this->dataFromImg[0] = scoreWTH;
 	this->dataFromImg[1] = scoreBTH;

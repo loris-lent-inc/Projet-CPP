@@ -44,25 +44,6 @@ private:
 
     unsigned char * m_pucPalette;
 
-
-
-    // Propagation du produit de convolution local pour la convolution globale
-    _EXPORT_ double convolution(int x, int y, const elemStruct& eltStructurant)const;
-    // Propagation du min local pour l'érosion
-    _EXPORT_ double erosion(int x, int y, const elemStruct& eltStructurant)const;
-    // Propagation du max local pour la dilatation
-    _EXPORT_ double dilatation(int x, int y, const elemStruct& eltStructurant)const;
-    // Propagation de la moyenne locale pour le filtrage
-    _EXPORT_ double moyenne(int x, int y, const elemStruct& eltStructurant)const;
-    // Propagation de la médiane locale pour le filtrage
-    _EXPORT_ double median(int x, int y, const elemStruct& eltStructurant)const;
-
-    // morphologie avancée
-    // méthode options : "erosion", "dilatation", convolution
-    // élément structurant elemStruct
-    _EXPORT_ CImageNdg morphologie_base(double (CImageNdg::* operation)(int, int, const elemStruct&) const = &dilatation, const elemStruct& eltStructurant = elemStruct::V8(), unsigned int nbIterations = 1) const;
-
-
 public:
     // constructeurs
     _EXPORT_ CImageNdg();                                       // par defaut

@@ -175,7 +175,7 @@ void CImageNdg::sauvegarde(const std::string file)
 
     if (this->m_pucPixel)
     {
-        std::string nomFichier = "C:/Users/loris/Google Drive/IPSI2/PCP/Projet-CPP/Devs/libImage/Codes C++/res/";
+        std::string nomFichier = "C:\\Users\\loris\\Google Drive\\IPSI2\\PCP\\Projet-CPP\\Devs\\libImage\\Codes C++\\res\\";
         if (!file.empty())
             nomFichier += file + ".bmp";
         else
@@ -593,261 +593,129 @@ CImageNdg CImageNdg::morphologie(const std::string methode, const elemStruct& el
 
     if (methode.compare("erosion") == 0)
     {
-        out = this->morphologie_base(&CImageNdg::erosion, eltStructurant);
-        out.m_sNom = this->lireNom() + "MEr";
-        /*CImageNdg agrandie(this->lireHauteur() + 2, this->lireLargeur() + 2);
+        int dx = eltStructurant.lireHauteur() / 2;
+        int dy = eltStructurant.lireLargeur() / 2;
 
-        // gestion des bords
-        if (this->lireBinaire())
-        {
-            int pix;
+        unsigned char minVal = 255;
 
-            for (pix = 0; pix < agrandie.lireLargeur(); pix++)
-            {
-                agrandie(0, pix)                       = 1;
-                agrandie(this->lireHauteur() - 1, pix) = 1;
-            }
-            for (pix = 1; pix < agrandie.lireHauteur() - 1; pix++)
-            {
-                agrandie(pix, 0)                       = 1;
-                agrandie(pix, this->lireLargeur() - 1) = 1;
-            }
-        }
-        else
-        {
-            int pix;
+        for (int i = 0; i < this->lireHauteur(); i++) {
+            for (int j = 0; j < this->lireLargeur(); j++) {
+                for (int k = -dx; k <= dx; k++) {
+                    for (int l = -dy; l <= dy; l++) {
+                        if (eltStructurant(k + dx, l + dy) == 0)
+                            continue;
 
-            for (pix = 0; pix < agrandie.lireLargeur(); pix++)
-            {
-                agrandie(0, pix)                       = 255;
-                agrandie(this->lireHauteur() - 1, pix) = 255;
-            }
-            for (pix = 1; pix < agrandie.lireHauteur() - 1; pix++)
-            {
-                agrandie(pix, 0)                       = 255;
-                agrandie(pix, this->lireLargeur() - 1) = 255;
-            }
-        }
-
-        // gestion du coeur
-        for (int i = 0; i < this->lireHauteur(); i++)
-            for (int j = 0; j < this->lireLargeur(); j++)
-            {
-                agrandie(i + 1, j + 1) = this->operator()(i, j);
-            }
-
-        if (eltStructurant.compare("V4") == 0)
-        {
-            for (int i = 1; i < agrandie.lireHauteur() - 1; i++)
-                for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
-                {
-                    int minH          = min(agrandie(i, j - 1), agrandie(i, j + 1));
-                    int minV          = min(agrandie(i - 1, j), agrandie(i + 1, j));
-                    int minV4         = min(minH, minV);
-                    out(i - 1, j - 1) = min(minV4, (int)agrandie(i, j));
-                }
-        }
-        else
-        {
-            if (eltStructurant.compare("V8") == 0)
-            {
-                for (int i = 1; i < agrandie.lireHauteur() - 1; i++)
-                    for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
-                    {
-                        int minH          = min(agrandie(i, j - 1), agrandie(i, j + 1));
-                        int minV          = min(agrandie(i - 1, j), agrandie(i + 1, j));
-                        int minV4         = min(minH, minV);
-                        int minD1         = min(agrandie(i - 1, j - 1), agrandie(i + 1, j + 1));
-                        int minD2         = min(agrandie(i - 1, j + 1), agrandie(i + 1, j - 1));
-                        int minD          = min(minD1, minD2);
-                        int minV8         = min(minV4, minD);
-                        out(i - 1, j - 1) = min(minV8, (int)agrandie(i, j));
+                        minVal = min(minVal, this->operator()(i + k, j + l)); // Gestion des bords par l'accesseur (<0 -> 0, >max -> max)
                     }
+                }
+
+                out(i, j) = minVal;
+                minVal = 255;
             }
-        }*/
+        }
     }
     else if (methode.compare("dilatation") == 0)
     {
-        out = this->morphologie_base(&CImageNdg::dilatation, eltStructurant);
-        out.m_sNom = this->lireNom() + "MDi";
-        /*CImageNdg agrandie(this->lireHauteur() + 2, this->lireLargeur() + 2);
+        int dx = eltStructurant.lireHauteur() / 2;
+        int dy = eltStructurant.lireLargeur() / 2;
 
-        // gestion des bords
-        int pix;
+        unsigned char maxVal = 0;
 
-        for (pix = 0; pix < agrandie.lireLargeur(); pix++)
-        {
-            agrandie(0, pix)                          = 0;
-            agrandie(agrandie.lireHauteur() - 1, pix) = 0;
-        }
-        for (pix = 1; pix < agrandie.lireHauteur() - 1; pix++)
-        {
-            agrandie(pix, 0)                          = 0;
-            agrandie(pix, agrandie.lireLargeur() - 1) = 0;
-        }
+        for (int i = 0; i < this->lireHauteur(); i++){
+            for (int j = 0; j < this->lireLargeur(); j++){
+                for (int k = -dx; k <= dx; k++) {
+                    for (int l = -dy; l <= dy; l++){
+                        if (eltStructurant(k + dx, l + dy) == 0)
+                            continue;
 
-        // gestion du coeur
-        for (int i = 0; i < this->lireHauteur(); i++)
-            for (int j = 0; j < this->lireLargeur(); j++)
-            {
-                agrandie(i + 1, j + 1) = this->operator()(i, j);
+						maxVal = max(maxVal, this->operator()(i + k, j + l)); // Gestion des bords par l'accesseur (<0 -> 0, >max -> max)
+					}
+				}
+                
+                out(i, j) = maxVal;
+                maxVal = 0;
             }
-
-        if (eltStructurant.compare("V4") == 0)
-        {
-            for (int i = 1; i < agrandie.lireHauteur() - 1; i++)
-                for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
-                {
-                    int maxH          = max(agrandie(i, j - 1), agrandie(i, j + 1));
-                    int maxV          = max(agrandie(i - 1, j), agrandie(i + 1, j));
-                    int maxV4         = max(maxH, maxV);
-                    out(i - 1, j - 1) = max(maxV4, (int)agrandie(i, j));
-                }
         }
-        else
-        {
-            if (eltStructurant.compare("V8") == 0)
-            {
-                for (int i = 1; i < agrandie.lireHauteur() - 1; i++)
-                    for (int j = 1; j < agrandie.lireLargeur() - 1; j++)
-                    {
-                        int maxH          = max(agrandie(i, j - 1), agrandie(i, j + 1));
-                        int maxV          = max(agrandie(i - 1, j), agrandie(i + 1, j));
-                        int maxV4         = max(maxH, maxV);
-                        int maxD1         = max(agrandie(i - 1, j - 1), agrandie(i + 1, j + 1));
-                        int maxD2         = max(agrandie(i - 1, j + 1), agrandie(i + 1, j - 1));
-                        int maxD          = max(maxD1, maxD2);
-                        int maxV8         = max(maxV4, maxD);
-                        out(i - 1, j - 1) = max(maxV8, (int)agrandie(i, j));
-                    }
-            }
-        }*/
     }
     else if (methode.compare("ouverture") == 0) {
           
-        out = this->morphologie_base(&CImageNdg::erosion, eltStructurant).morphologie_base(&CImageNdg::dilatation, eltStructurant);
-        out.ecrireNom(this->lireNom() + "Mouv");
+        out = this->morphologie("erosion", eltStructurant).morphologie("dilatation", eltStructurant);
+        //out.ecrireNom(this->lireNom() + "Mouv");
     }
 
     else if (methode.compare("fermeture") == 0) {
            
-        out = this->morphologie_base(&CImageNdg::dilatation, eltStructurant).morphologie_base(&CImageNdg::erosion, eltStructurant);
-        out.ecrireNom(this->lireNom() + "Mouv");
+        out = this->morphologie("dilatation", eltStructurant).morphologie("erosion", eltStructurant);
+        //out.ecrireNom(this->lireNom() + "Mouv");
     }
 
     else if (methode.compare("BTH") == 0) {
           
         CImageNdg ouverture = this->morphologie("ouverture", eltStructurant);
         out = *this - ouverture;
-        out.ecrireNom(this->lireNom() + "MBth");
+        //out.ecrireNom(this->lireNom() + "MBth");
     }
 
     else if (methode.compare("WTH") == 0) {
            
         CImageNdg fermeture = this->morphologie("fermeture", eltStructurant);
         out = fermeture - *this;
-        out.ecrireNom(this->lireNom() + "Mwth");
+        //out.ecrireNom(this->lireNom() + "Mwth");
     }
 
     else if (methode.compare("moyenne")) {
-		out = this->morphologie_base(&CImageNdg::moyenne, eltStructurant);
-		out.ecrireNom(this->lireNom() + "Moy");
+        int dx = eltStructurant.lireHauteur() / 2;
+        int dy = eltStructurant.lireLargeur() / 2;
+        int surface = 0;
+
+        //Calcul de la surface non-nulle de l'element structurant
+        for (int i = 0; i < eltStructurant.lireHauteur(); i++)
+            for (int j = 0; j < eltStructurant.lireLargeur(); j++)
+				surface += eltStructurant(i, j);
+
+
+        int moyVal = 0;
+
+        for (int i = 0; i < this->lireHauteur(); i++) {
+            for (int j = 0; j < this->lireLargeur(); j++) {
+                for (int k = -dx; k <= dx; k++) {
+                    for (int l = -dy; l <= dy; l++) {
+                        moyVal += eltStructurant(k + dx, l + dy) * this->operator()(i + k, j + l); // Gestion des bords par l'accesseur (<0 -> 0, >max -> max)
+                    }
+                }
+
+                out(i, j) = moyVal/surface;
+                moyVal = 0;
+            }
+        }
+        //out.ecrireNom(this->lireNom() + "Moy");
 	}
 
     else if (methode.compare("median")) {
-        out = this->morphologie_base(&CImageNdg::median, eltStructurant);
-        out.ecrireNom(this->lireNom() + "Med");
+        int dx = eltStructurant.lireHauteur() / 2;
+        int dy = eltStructurant.lireLargeur() / 2;
+        std::vector<char> voisinage;
+
+        for (int i = 0; i < this->lireHauteur(); i++) {
+            for (int j = 0; j < this->lireLargeur(); j++) {
+                for (int k = -dx; k <= dx; k++) {
+                    for (int l = -dy; l <= dy; l++) {
+                        if (eltStructurant(k + dx, l + dy) == 0)
+                            continue;
+
+                        voisinage.push_back(this->operator()(i + k, j + l)); // Gestion des bords par l'accesseur (<0 -> 0, >max -> max)
+                    }
+                }
+                std::sort(voisinage.begin(), voisinage.end());
+                out(i, j) = voisinage.at(voisinage.size()/2);
+                voisinage.clear();
+            }
+        }
+        
+        //out.ecrireNom(this->lireNom() + "Med");
     }
 
     return out;
-}
-
-// convolution
-double CImageNdg::convolution(int x, int y, const elemStruct& eltStructurant) const{
-    double somme = 0;
-    int deltaX = eltStructurant.lireHauteur() / 2;
-    int deltaY = eltStructurant.lireLargeur() / 2;
-
-    for (int i = 0; i < eltStructurant.lireHauteur(); i++)
-        for (int j = 0; j < eltStructurant.lireLargeur(); j++)
-            somme += eltStructurant(i, j) * (*this)(x + i - deltaX, y + j - deltaY);
-
-    return somme;
-}
-
-double CImageNdg::erosion(int x, int y, const elemStruct& eltStructurant) const{
-    double min_val = DBL_MAX;
-    int deltaX = eltStructurant.lireHauteur() / 2;
-    int deltaY = eltStructurant.lireLargeur() / 2;
-
-    for (int i = 0; i < eltStructurant.lireHauteur(); i++)
-        for (int j = 0; j < eltStructurant.lireLargeur(); j++)
-            if (eltStructurant(i, j) != 0)
-                min_val = min(min_val, (*this)(x + i - deltaX, y + j - deltaY));
-
-    return min_val;
-}
-
-double CImageNdg::dilatation(int x, int y, const elemStruct& eltStructurant) const{
-    double max_val = DBL_MIN;
-    int deltaX = eltStructurant.lireHauteur() / 2;
-    int deltaY = eltStructurant.lireLargeur() / 2;
-
-    for (int i = 0; i < eltStructurant.lireHauteur(); i++)
-        for (int j = 0; j < eltStructurant.lireLargeur(); j++)
-            if (eltStructurant(i, j) != 0)
-                max_val = max(max_val, (*this)(x + i - deltaX, y + j - deltaY));
-
-    return max_val;
-}
-
-double CImageNdg::moyenne(int x, int y, const elemStruct& eltStructurant) const {
-	double somme = 0;
-	int deltaX = eltStructurant.lireHauteur() / 2;
-	int deltaY = eltStructurant.lireLargeur() / 2;
-
-	for (int i = 0; i < eltStructurant.lireHauteur(); i++)
-		for (int j = 0; j < eltStructurant.lireLargeur(); j++)
-			somme += eltStructurant(i, j) * (*this)(x + i - deltaX, y + j - deltaY);
-
-	return somme / (eltStructurant.lireHauteur() * eltStructurant.lireLargeur());
-}
-
-double CImageNdg::median(int x, int y, const elemStruct& eltStructurant) const {
-	std::vector<int> voisinage;
-
-	int deltaX = eltStructurant.lireHauteur() / 2;
-	int deltaY = eltStructurant.lireLargeur() / 2;
-
-	for (int i = 0; i < eltStructurant.lireHauteur(); i++)
-		for (int j = 0; j < eltStructurant.lireLargeur(); j++)
-			voisinage.push_back((*this)(x + i - deltaX, y + j - deltaY));
-
-	std::sort(voisinage.begin(), voisinage.end());
-
-	return voisinage[voisinage.size() / 2];
-}
-
-CImageNdg CImageNdg::morphologie_base(double (CImageNdg::* operation)(int, int, const elemStruct&) const, const elemStruct& eltStructurant, unsigned int nbIterations) const{
-
-    CImageNdg out(this->lireHauteur(), this->lireLargeur());
-
-    out.choixPalette(this->lirePalette()); // conservation de la palette
-    out.m_bBinaire = this->m_bBinaire; // conservation du type
-
-    // convolution
-    for (int i = 0; i < this->lireHauteur(); i++) {
-        for (int j = 0; j < this->lireLargeur(); j++) {
-            out(i, j) = (this->*operation)(i, j, eltStructurant);
-        }
-    }
-
-    if (nbIterations <= 1) {
-		return out;
-	}
-    else {
-		return out.morphologie_base(operation, eltStructurant, nbIterations - 1);
-	}
 }
 
 CImageNdg CImageNdg::filtrage(const std::string & methode, int Ni, int Nj)

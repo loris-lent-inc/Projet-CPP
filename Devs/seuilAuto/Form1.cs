@@ -196,7 +196,7 @@ namespace seuilAuto
             }
 
             pictureBoxPOST.Image = sourceBMP;
-            currentScore = (int)(100 * Math.Sqrt(Img.objetLibValeurChamp(3) * Img.objetLibValeurChamp(4)));
+            currentScore = (int)(100 * Math.Max(Img.objetLibValeurChamp(3), Img.objetLibValeurChamp(4)));//(int)(100 * Math.Sqrt(Img.objetLibValeurChamp(3) * Img.objetLibValeurChamp(4)));
             somme += currentScore;
             moyenne = somme/(position+1);
             labelScore.Text = currentScore  + "%";
