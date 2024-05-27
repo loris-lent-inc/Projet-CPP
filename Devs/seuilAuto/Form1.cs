@@ -96,7 +96,7 @@ namespace seuilAuto
                 string preFilePath = Path.Combine(selectedPath, "PreImages");
                 string postFilePath = Path.Combine(selectedPath, "PostImages");
 
-                saveImage(images,imagesTraitees,preFilePath,postFilePath);
+                saveImage(imagesPost,imagesTraitees,preFilePath,postFilePath);
 
                 MessageBox.Show("Images sauvegardées avec succès!");
              }
