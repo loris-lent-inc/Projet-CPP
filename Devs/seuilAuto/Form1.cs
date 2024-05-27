@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,11 +21,13 @@ namespace seuilAuto
 {
     public partial class Form1 : Form
     {
-        double moyenne = 0, mediane = 0, currentScore = 0;
+        int moyenne = 0, mediane = 0, currentScore = 0, somme = 0;
         bool run = false;
-        List<Image> images;
         List<Image> imagesPost = new List<Image>();
         List<Image> imagesTraitees = new List<Image>();
+        List<String> titres = new List<String>();
+        
+        List<Tuple<Image, Image>> images;
         int position = 0;
 
         public enum State
@@ -108,27 +110,36 @@ namespace seuilAuto
                 return;
             }
             position = 0;
-            pictureBoxPRE.Image = images[position];
+            pictureBoxPRE.Image = images[position].Item1;
             labelNumero.Text = (position + 1) + "/" + images.Count;
         }
 
-        public List<Image> LoadBmpImages()
+        public List<Tuple<Image, Image>> LoadBmpImages()
         {
-            List<Image> images = new List<Image>();
+            List<Tuple<Image, Image>> images = new List<Tuple<Image, Image>>();
             FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
-                string[] files = Directory.GetFiles(folderBrowserDialog1.SelectedPath, "*.bmp");
-                if (files.Length == 0)
+                string path = folderBrowserDialog1.SelectedPath;
+                string sources = path + "\\Source Images - bmp";
+                string gt = path + "\\Ground Truth - bmp";
+
+                string[] source_files = Directory.GetFiles(sources, "*.bmp");
+                string[] gt_files = Directory.GetFiles(gt, "*.bmp");
+                if (source_files.Length == 0)
                 {
                     MessageBox.Show("Aucune image BMP trouvée dans le dossier sélectionné.");
                     return images;
                 }
 
-                foreach (string file in files)
+                foreach (string file in source_files)
                 {
+                    string file_title = Path.GetFileName(file);
+                    titres.Add(file_title);
                     Image image = Image.FromFile(file);
-                    images.Add(image);
+                    Image GT = Image.FromFile(gt + "\\" + file_title);
+                    Tuple<Image, Image> t = new Tuple<Image, Image>(image, GT);
+                    images.Add(t);
                 }
             }
             return images;
@@ -147,9 +158,14 @@ namespace seuilAuto
 
             };
 
+            Label[] scores = new Label[]
+            {
+                labelScore1, labelScore2, labelScore3, labelScore4, labelScore5, labelScore6, labelScore7, labelScore8, labelScore9, labelScore10
+            };
+
             while (currentState == State.RUN)
             {
-                goToNext(preBoxes, postBoxes);
+                goToNext(preBoxes, postBoxes, scores);
                 Application.DoEvents();
                 Thread.Sleep(10);
                 // MessageBox.Show("OK");
@@ -158,22 +174,34 @@ namespace seuilAuto
 
         }
 
-        private void goToNext(PictureBox[] preBoxes, PictureBox[] postBoxes)
+        private void Form1_Load(object sender, EventArgs e)
         {
-            Image old = pictureBoxPRE.Image = images[position];
-            Bitmap BMP = new Bitmap(old);
+
+        }
+
+        private void goToNext(PictureBox[] preBoxes, PictureBox[] postBoxes, Label[] scores)
+        {
+            Image old = pictureBoxPRE.Image = images[position].Item1;
+            labelFichier.Text = titres[position];
+            Bitmap sourceBMP = new Bitmap(old);
+            Bitmap GTBMP = new Bitmap(images[position].Item2);
             ClImage Img = new ClImage();
             unsafe
             {
-                BitmapData bmpData = BMP.LockBits(new Rectangle(0, 0, BMP.Width, BMP.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                Img.objetLibDataImgPtr(1, bmpData.Scan0, bmpData.Stride, BMP.Height, BMP.Width);
+                BitmapData sourceBMPData = sourceBMP.LockBits(new Rectangle(0, 0, sourceBMP.Width, sourceBMP.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                BitmapData GTbmpData = GTBMP.LockBits(new Rectangle(0, 0, GTBMP.Width, GTBMP.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                Img.objetLibDataImgPtr(5, sourceBMPData.Scan0, GTbmpData.Scan0, sourceBMPData.Stride, sourceBMP.Height, sourceBMP.Width);
                 // 1 champ texte retour C++, le seuil auto
-                BMP.UnlockBits(bmpData);
+                sourceBMP.UnlockBits(sourceBMPData);
             }
 
-            
-            pictureBoxPOST.Image = BMP;
-
+            pictureBoxPOST.Image = sourceBMP;
+            currentScore = (int)(100 * Math.Sqrt(Img.objetLibValeurChamp(3) * Img.objetLibValeurChamp(4)));
+            somme += currentScore;
+            moyenne = somme/(position+1);
+            labelScore.Text = currentScore  + "%";
+            //labelScore.Text = "Score : " + Img.objetLibValeurChamp(0) +";"+ Img.objetLibValeurChamp(1) +";"+ Img.objetLibValeurChamp(2) + "%";
+            labelMoyenne.Text = moyenne + "%";
             labelNumero.Text = (position + 1) + "/" + images.Count;
             
 
@@ -199,6 +227,17 @@ namespace seuilAuto
             }
             postBoxes[0].Image = pictureBoxPOST.Image;
             imagesTraitees.Add(postBoxes[0].Image);
+            
+            for (int i = scores.Length - 1; i > 0; i--)
+            {
+                if (scores[i - 1].Text != null)
+                {
+                    scores[i].Text = scores[i - 1].Text;
+                }
+
+            }
+            scores[0].Text = labelScore.Text;
+
 
             position++;
             if (position >= images.Count)
