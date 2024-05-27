@@ -1896,10 +1896,12 @@ _EXPORT_ double CImageClasse::localIOU(const CImageClasse& ref, int x, int y, in
             if (i < 0 || i >= this->lireHauteur() || j < 0 || j >= this->lireLargeur()) {
                 continue;
             }
-            if (this->operator()(i, j) && ref(i, j)) {
+            int t = this->operator()(i, j);
+            int r = ref(i, j);
+            if (t && r) {
                 intersection++;
             }
-            if (this->operator()(i, j) || ref(i, j)) {
+            if (t || r) {
                 uni++;
             }
         }
@@ -1919,23 +1921,33 @@ _EXPORT_ double CImageClasse::Vinet(const CImageClasse& ref) {
     int min_nb = min(loc_sig.size(), ref_sig.size());
 
     for (int i = 1; i < min_nb; i++) {
-        int left = min(loc_sig[i].rectEnglob_Hj, ref_sig[i].rectEnglob_Hj);
-        int right = max(loc_sig[i].rectEnglob_Bj, ref_sig[i].rectEnglob_Bj);
-        int top = min(loc_sig[i].rectEnglob_Hi, ref_sig[i].rectEnglob_Hi);
-        int bottom = max(loc_sig[i].rectEnglob_Bi, ref_sig[i].rectEnglob_Bi);
-        int h = bottom - top;
-        int w = right - left;
-		double iou = this->localIOU(ref, left, top, right - left, bottom - top);
-        surface += (w) * (h);
-        cumul += iou * w * h;
-	}
+        // Recherche du plus proche composant
+        int minIndex = 1;
+        int minDist = INT_MAX;
+        for (int j = 1; j < loc_sig.size(); j++) {
+            int dist = pow(loc_sig[j].centreGravite_i - ref_sig[i].centreGravite_i, 2) + pow(loc_sig[j].centreGravite_j - ref_sig[i].centreGravite_j, 2);
+            if (dist < minDist) {
+                minDist = dist;
+                minIndex = j;
+            }
+        }
 
-    // On ajoute les surfaces des composantes connexes surdetectées
-    for (int i = min_nb; i < loc_sig.size(); i++) {
-		surface += loc_sig[i].surface;
-	}
+        auto r_comp = ref_sig[i];
+        auto t_comp = loc_sig[minIndex];
 
-    // On ajoute les surfaces des composantes connexes manquées
+        // Comparaison avec plus proche composant
+        int min_j = min(t_comp.rectEnglob_Hj, r_comp.rectEnglob_Hj);
+        int max_j = max(t_comp.rectEnglob_Bj, r_comp.rectEnglob_Bj);
+        int min_i = min(t_comp.rectEnglob_Hi, r_comp.rectEnglob_Hi);
+        int max_i = max(t_comp.rectEnglob_Bi, r_comp.rectEnglob_Bi);
+        int di = max_i - min_i + 1;
+        int dj = max_j - min_j + 1;
+        double iou = this->localIOU(ref, min_i, min_j, di, dj);
+        surface += di * dj;
+        cumul += iou * di * dj;
+    }
+
+    // On ajoute les surfaces des composantes connexes manquées (on penalise la sous-detection)
     for (int i = min_nb; i < ref_sig.size(); i++) {
         surface += ref_sig[i].surface;
     }
