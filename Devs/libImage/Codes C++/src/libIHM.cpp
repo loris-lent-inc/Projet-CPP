@@ -62,8 +62,8 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, byte* refIm, int stride, int nbLig, i
 	double scoreBTH = bth.correlation_croisee_normalisee(ref);
 	double scoreSSO = sso.correlation_croisee_normalisee(ref);
 
-	wth.seuillage().sauvegarde("wth" + std::to_string(scoreWTH));
-	bth.seuillage().sauvegarde("bth" + std::to_string(scoreBTH));
+	//wth.seuillage().sauvegarde("wth" + std::to_string(scoreWTH));
+	//bth.seuillage().sauvegarde("bth" + std::to_string(scoreBTH));
 	//sso.sauvegarde("ss" + std::to_string(scoreSSO));
 
 	CImageNdg bst = sso;
@@ -87,7 +87,7 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, byte* refIm, int stride, int nbLig, i
 	double scoreVinet = imgSeuil.Vinet(refClass);
 	
 	out = CImageCouleur(imgSeuil.toNdg("expansion"));
-	out.plan().sauvegarde();
+	//out.plan().sauvegarde();
 	
 	this->dataFromImg[0] = scoreWTH;
 	this->dataFromImg[1] = scoreBTH;
