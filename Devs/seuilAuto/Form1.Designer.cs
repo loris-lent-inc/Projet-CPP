@@ -594,7 +594,7 @@ namespace seuilAuto
             this.last10table.Controls.Add(this.pictureBoxPOST9, 8, 2);
             this.last10table.Controls.Add(this.pictureBoxPOST10, 9, 2);
             this.last10table.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.last10table.Location = new System.Drawing.Point(0, 491);
+            this.last10table.Location = new System.Drawing.Point(0, 488);
             this.last10table.Name = "last10table";
             this.last10table.RowCount = 3;
             this.last10table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 38.8664F));
@@ -750,7 +750,7 @@ namespace seuilAuto
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1292, 752);
+            this.ClientSize = new System.Drawing.Size(1292, 749);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.tableLayoutPanel3);

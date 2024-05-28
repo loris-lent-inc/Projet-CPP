@@ -22,7 +22,7 @@ namespace seuilAuto
 {
     public partial class Form1 : Form
     {
-        int moyenne = 0, mediane = 0, currentScore = 0, somme = 0;
+        int moyenne = 0, currentScore = 0, somme = 0;
         
         // Liste des images chargées
         List<String> titres = new List<String>();
@@ -36,7 +36,7 @@ namespace seuilAuto
         Label[] scores = null;
 
         // Variables pour le multithreading
-        int nbThreads = 1;
+        int nbThreads = 2;
         List<Thread> threads = new List<Thread>();
         Queue<ClImage> buffer = new Queue<ClImage>();
         List<int> positionBuffer = new List<int>(); // = -1 arrivé à la fin de la liste
@@ -53,7 +53,7 @@ namespace seuilAuto
 
         private State currentState = State.INIT;
 
-        private Thread t1;
+        // private Thread t1;
 
         public Form1()
         {
@@ -94,7 +94,7 @@ namespace seuilAuto
             string preFilePath = Path.Combine(selectedPath, "PreImages");
             string postFilePath = Path.Combine(selectedPath, "PostImages");
 
-            //saveImage(imagesPost, imagesTraitees, preFilePath, postFilePath);
+            saveImage(preFilePath, postFilePath);
 
             MessageBox.Show("Images sauvegardées avec succès!");
         }
@@ -269,9 +269,6 @@ namespace seuilAuto
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
             if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
             {
-                //string selectedPath = folderBrowserDialog.SelectedPath;
-                //string imgTraitees = Path.Combine(selectedPath, "ImgPOST");
-
                 // création dossier pour images PRE et images POST
                 if (!Directory.Exists(pathPre))
                     Directory.CreateDirectory(pathPre);
@@ -282,15 +279,12 @@ namespace seuilAuto
                 // enregistrement des img
                 for (int i = 0; i < clImages.Count; i++)
                 {
-                    string fileName = timeFileName("PRE", i);
-                    string filePath = Path.Combine(pathPre, fileName);
-                    clImages[i].source.Save(filePath, ImageFormat.Bmp);
-                }
+                    string fileNamePre = timeFileName("PRE", i);
+                    string filePathPre = Path.Combine(pathPre, fileNamePre);
+                    clImages[i].source.Save(filePathPre, ImageFormat.Bmp);
 
-                for (int i = 0; i < clImages.Count; i++)
-                {
-                    string fileName = timeFileName("POST", i);
-                    string filePath = Path.Combine(pathPost, fileName);
+                    string fileNamePost = timeFileName("POST", i);
+                    string filePath = Path.Combine(pathPost, fileNamePost);
                     clImages[i].result.Save(filePath, ImageFormat.Bmp);
                 }
 

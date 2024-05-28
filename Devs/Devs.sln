@@ -10,8 +10,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "seuilAuto", "seuilAuto\seui
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libImage", "libImage\libImage.vcxproj", "{9D7F0689-81BA-4EC6-9C34-5D5DA884F66A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testAppCPP", "testAppCPP\testAppCPP.vcxproj", "{535C5FF1-9FAC-4599-98A0-D5329304E233}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,26 +62,6 @@ Global
 		{9D7F0689-81BA-4EC6-9C34-5D5DA884F66A}.Release|x64.Build.0 = Release|x64
 		{9D7F0689-81BA-4EC6-9C34-5D5DA884F66A}.Release|x86.ActiveCfg = Release|Win32
 		{9D7F0689-81BA-4EC6-9C34-5D5DA884F66A}.Release|x86.Build.0 = Release|Win32
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Debug|Any CPU.Build.0 = Debug|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Debug|ARM.ActiveCfg = Debug|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Debug|ARM.Build.0 = Debug|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Debug|ARM64.ActiveCfg = Debug|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Debug|ARM64.Build.0 = Debug|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Debug|x64.ActiveCfg = Debug|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Debug|x64.Build.0 = Debug|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Debug|x86.ActiveCfg = Debug|Win32
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Debug|x86.Build.0 = Debug|Win32
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Release|Any CPU.ActiveCfg = Release|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Release|Any CPU.Build.0 = Release|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Release|ARM.ActiveCfg = Release|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Release|ARM.Build.0 = Release|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Release|ARM64.ActiveCfg = Release|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Release|ARM64.Build.0 = Release|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Release|x64.ActiveCfg = Release|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Release|x64.Build.0 = Release|x64
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Release|x86.ActiveCfg = Release|Win32
-		{535C5FF1-9FAC-4599-98A0-D5329304E233}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
