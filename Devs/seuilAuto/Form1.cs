@@ -94,6 +94,12 @@ namespace seuilAuto
             string preFilePath = Path.Combine(selectedPath, "PreImages");
             string postFilePath = Path.Combine(selectedPath, "PostImages");
 
+            // Créer les dossiers si ils n'existent pas
+            if (!Directory.Exists(preFilePath))
+                Directory.CreateDirectory(preFilePath);
+
+            if (!Directory.Exists(postFilePath))
+                Directory.CreateDirectory(postFilePath);
             saveImage(preFilePath, postFilePath);
 
             MessageBox.Show("Images sauvegardées avec succès!");
@@ -265,31 +271,22 @@ namespace seuilAuto
         }
 
         private void saveImage(string pathPre, string pathPost)
-        {
-            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+        { 
+            if (!Directory.Exists(pathPre) || !Directory.Exists(pathPost))
+                return;
+            
+            // enregistrement des img
+            for (int i = 0; i < clImages.Count; i++)
             {
-                // création dossier pour images PRE et images POST
-                if (!Directory.Exists(pathPre))
-                    Directory.CreateDirectory(pathPre);
+               string fileNamePre = timeFileName("PRE", i);
+               string filePathPre = Path.Combine(pathPre, fileNamePre);
+               clImages[i].source.Save(filePathPre, ImageFormat.Bmp);
 
-                if (!Directory.Exists(pathPost))
-                    Directory.CreateDirectory(pathPost);
-
-                // enregistrement des img
-                for (int i = 0; i < clImages.Count; i++)
-                {
-                    string fileNamePre = timeFileName("PRE", i);
-                    string filePathPre = Path.Combine(pathPre, fileNamePre);
-                    clImages[i].source.Save(filePathPre, ImageFormat.Bmp);
-
-                    string fileNamePost = timeFileName("POST", i);
-                    string filePath = Path.Combine(pathPost, fileNamePost);
-                    clImages[i].result.Save(filePath, ImageFormat.Bmp);
-                }
-
-                MessageBox.Show("Images enregistrées avec succès!");
+               string fileNamePost = timeFileName("POST", i);
+               string filePathPost = Path.Combine(pathPost, fileNamePost);
+               clImages[i].result.Save(filePathPost, ImageFormat.Bmp);
             }
+            
         }
 
         private string timeFileName(string nomImg, int index)
