@@ -36,7 +36,7 @@ namespace seuilAuto
         Label[] scores = null;
 
         // Variables pour le multithreading
-        int nbThreads = 8;
+        int nbThreads = 1;
         List<Thread> threads = new List<Thread>();
         Queue<ClImage> buffer = new Queue<ClImage>();
         List<int> positionBuffer = new List<int>(); // = -1 arrivé à la fin de la liste
@@ -258,7 +258,7 @@ namespace seuilAuto
             {
                 positionAffichage = 0;
                 for (int i = 0; i < nbThreads; i++)
-                    positionBuffer[i] = 0;
+                    positionBuffer[i] = i;
                 processState(State.RUN_STOP);
                 return;
             }
