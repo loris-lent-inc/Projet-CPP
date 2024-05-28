@@ -22,7 +22,7 @@ namespace seuilAuto
 {
     public partial class Form1 : Form
     {
-        int moyenne = 0, mediane = 0, currentScore = 0, somme = 0;
+        int moyenne = 0, currentScore = 0, somme = 0;
         
         // Liste des images chargées
         List<String> titres = new List<String>();
@@ -36,7 +36,7 @@ namespace seuilAuto
         Label[] scores = null;
 
         // Variables pour le multithreading
-        int nbThreads = 1;
+        int nbThreads = 8;
         List<Thread> threads = new List<Thread>();
         Queue<ClImage> buffer = new Queue<ClImage>();
         List<int> positionBuffer = new List<int>(); // = -1 arrivé à la fin de la liste
@@ -53,7 +53,7 @@ namespace seuilAuto
 
         private State currentState = State.INIT;
 
-        private Thread t1;
+        //private Thread t1;
 
         public Form1()
         {
@@ -182,7 +182,8 @@ namespace seuilAuto
         {
             while (currentState != State.END_THREADS)
             {
-                //progressBar1.Value = 100 * buffer.Count / bufferLength;
+                //int value = (int)(100 * ((double)buffer.Count / bufferLength));
+                //progressBar1.Value = Math.Min(100, value);
                 Thread.Sleep(50);
             }
         }
@@ -196,6 +197,8 @@ namespace seuilAuto
             while (currentState == State.RUN){
                 goToNext();
                 Application.DoEvents();
+                int value = (int)(100 * ((double)buffer.Count / bufferLength));
+                progressBar1.Value = Math.Min(100, value);
                 Thread.Sleep(300);
             }
         }
@@ -215,8 +218,6 @@ namespace seuilAuto
             labelFichier.Text = titres[positionAffichage];
             labelNumero.Text = (positionAffichage + 1) + "/" + loadedFiles.Count;
 
-
-
             //Affichage de l'image traitée
             pictureBoxPOST.Image = resultBMP;
 
@@ -229,7 +230,6 @@ namespace seuilAuto
             labelScore.Text = currentScore + "%";
             labelMoyenne.Text = moyenne + "%";
             labelTemps.Text = $"{Img.tempsTraitement/nbThreads:F2}s";
-
 
             // Mise à jour des images précédentes
             for (int i = preBoxes.Length - 1; i > 0; i--)
@@ -252,7 +252,7 @@ namespace seuilAuto
 
             scores[0].Text = labelScore.Text + " (" + labelTemps.Text + ")";
 
-
+            // Mise à jour de la position d'affichage
             positionAffichage++;
             if (positionAffichage >= loadedFiles.Count)
             {
