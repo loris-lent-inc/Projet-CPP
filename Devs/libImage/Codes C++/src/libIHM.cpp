@@ -7,8 +7,13 @@
 #include <vector>
 #include <ctime>
 #include <stack>
+#include <thread>
+
 
 #include "../include/libIHM.h"
+
+
+
 
 ClibIHM::ClibIHM() {
 
@@ -44,35 +49,32 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, byte* refIm, int stride, int nbLig, i
 		refPtr += stride;
 	}
 	
-	CImageNdg img = this->imgPt->plan();
+	CImageNdg img = this->imgPt->plan().morphologie("median", elemStruct::croix(5));
 	CImageNdg ref = refC.plan();
-
-
-
 
 	// TRAITEMENT
 	
-	//ref.sauvegarde("ref");
-	auto D17 = elemStruct::disque(8, 1);
-	CImageNdg wth = img.morphologie("WTH", D17);
-	CImageNdg bth = img.morphologie("median", elemStruct::disque(5, 1)).morphologie("BTH", D17);
-	CImageNdg sso = img.seuillage();
+	auto D17 = elemStruct::disque(8);
+	
+	CImageNdg wth, bth;
+	double scoreWTH, scoreBTH, scoreIOU, scoreVinet;
+	
+	std::thread tw([&img, &ref, &D17, &wth, &scoreWTH]() {
+		wth = img.morphologie("WTH", D17);
+		scoreWTH = wth.correlation_croisee_normalisee(ref);
+		});
 
-	double scoreWTH = wth.correlation_croisee_normalisee(ref);
-	double scoreBTH = bth.correlation_croisee_normalisee(ref);
-	double scoreSSO = sso.correlation_croisee_normalisee(ref);
+	std::thread tb([&img, &ref, &D17, &bth, &scoreBTH]() {
+		bth = img.morphologie("BTH", D17);
+		scoreBTH = bth.correlation_croisee_normalisee(ref);
+		});
 
-	//wth.seuillage().sauvegarde("wth" + std::to_string(scoreWTH));
-	//bth.seuillage().sauvegarde("bth" + std::to_string(scoreBTH));
-	//sso.sauvegarde("ss" + std::to_string(scoreSSO));
 
-	CImageNdg bst = sso;
-	double bestScore = scoreSSO;
+	tw.join(); tb.join();
 
-	if (scoreWTH > bestScore){
-		bst = wth.seuillage();
-		bestScore = scoreWTH;
-	}
+	CImageNdg bst = wth.seuillage();
+	double bestScore = scoreWTH;
+
 	if (scoreBTH > bestScore){
 		bst = bth.seuillage();
 		bestScore = scoreBTH;
@@ -80,24 +82,16 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, byte* refIm, int stride, int nbLig, i
 
 	CImageClasse imgSeuil = CImageClasse(bst, "V4");
 	CImageClasse refClass = CImageClasse(ref, "V4");
-
 	imgSeuil = imgSeuil.filtrage("taille", 100, true);
 
-	double scoreIOU = imgSeuil.IOU(refClass);
-	double scoreVinet = imgSeuil.Vinet(refClass);
-	
 	out = CImageCouleur(imgSeuil.toNdg("expansion"));
-	//out.plan().sauvegarde();
+
+	scoreIOU = imgSeuil.IOU(refClass);
+	scoreVinet = imgSeuil.Vinet(refClass);	
 	
-	this->dataFromImg[0] = scoreWTH;
-	this->dataFromImg[1] = scoreBTH;
-	this->dataFromImg[2] = scoreSSO;
-	this->dataFromImg[3] = scoreIOU;
-	this->dataFromImg[4] = scoreVinet;
-
-
 	// RECONTRUCTION DU RETOUR IMAGE
 	pixPtr = (byte*)data;
+	
 	for (int y = 0; y < nbLig; y++)
 	{
 		for (int x = 0; x < nbCol; x++)
@@ -108,6 +102,9 @@ ClibIHM::ClibIHM(int nbChamps, byte* data, byte* refIm, int stride, int nbLig, i
 		}
 		pixPtr += stride; // largeur une seule ligne gestion multiple 32 bits
 	}
+	
+	this->dataFromImg[0] = scoreVinet;
+	this->dataFromImg[1] = scoreIOU;
 }
 
 

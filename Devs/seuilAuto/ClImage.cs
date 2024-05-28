@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Diagnostics;
+using System.Drawing.Imaging;
 
 namespace libImage
 {
@@ -14,6 +16,10 @@ namespace libImage
         // on crée une classe C# avec pointeur sur l'objet C++
         // puis des static extern exportées de chaque méthode utile de la classe C++
         public IntPtr ClPtr;
+        public double tempsTraitement;
+        public Image source = null;
+        //public Image gtruth = null;
+        public Image result = null;
 
         public ClImage()
         {
@@ -54,6 +60,36 @@ namespace libImage
         public double objetLibValeurChamp(int i)
         {
             return valeurChamp(ClPtr, i);
+        }
+
+        public static ClImage traiter(Tuple<Image, Image> tuple)
+        {
+            ClImage Img = new ClImage();
+            
+            Img.source = tuple.Item1;
+            //Img.gtruth = tuple.Item2;
+
+            Bitmap sourceBMP = new Bitmap(Img.source);
+            Bitmap GTBMP = new Bitmap(tuple.Item2);
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            unsafe
+            {
+                BitmapData sourceBMPData = sourceBMP.LockBits(new Rectangle(0, 0, sourceBMP.Width, sourceBMP.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                BitmapData GTbmpData = GTBMP.LockBits(new Rectangle(0, 0, GTBMP.Width, GTBMP.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
+                Img.objetLibDataImgPtr(2, sourceBMPData.Scan0, GTbmpData.Scan0, sourceBMPData.Stride, sourceBMP.Height, sourceBMP.Width);
+                // 1 champ texte retour C++, le seuil auto
+                sourceBMP.UnlockBits(sourceBMPData);
+                GTBMP.UnlockBits(GTbmpData);
+            }
+            stopwatch.Stop();
+            TimeSpan elapsedTime = stopwatch.Elapsed;
+            
+            Img.tempsTraitement = elapsedTime.TotalSeconds;
+            Img.result = new Bitmap(sourceBMP);
+
+            return Img;
         }
     }
 }

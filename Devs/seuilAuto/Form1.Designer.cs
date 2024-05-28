@@ -86,6 +86,7 @@ namespace seuilAuto
             this.pictureBoxPRE = new System.Windows.Forms.PictureBox();
             this.pictureBoxPOST = new System.Windows.Forms.PictureBox();
             this.currenttable = new System.Windows.Forms.TableLayoutPanel();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPRE1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPRE2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPRE3)).BeginInit();
@@ -119,7 +120,7 @@ namespace seuilAuto
             // 
             this.button3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.button3.Enabled = false;
-            this.button3.Location = new System.Drawing.Point(22, 296);
+            this.button3.Location = new System.Drawing.Point(22, 317);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 5;
@@ -131,7 +132,7 @@ namespace seuilAuto
             // 
             this.labelMoyenne.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.labelMoyenne.AutoSize = true;
-            this.labelMoyenne.Location = new System.Drawing.Point(265, 322);
+            this.labelMoyenne.Location = new System.Drawing.Point(265, 344);
             this.labelMoyenne.Name = "labelMoyenne";
             this.labelMoyenne.Size = new System.Drawing.Size(13, 13);
             this.labelMoyenne.TabIndex = 7;
@@ -141,7 +142,7 @@ namespace seuilAuto
             // 
             this.label9.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(63, 397);
+            this.label9.Location = new System.Drawing.Point(63, 424);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(54, 13);
             this.label9.TabIndex = 8;
@@ -151,7 +152,7 @@ namespace seuilAuto
             // 
             this.labelMediane.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.labelMediane.AutoSize = true;
-            this.labelMediane.Location = new System.Drawing.Point(265, 397);
+            this.labelMediane.Location = new System.Drawing.Point(265, 424);
             this.labelMediane.Name = "labelMediane";
             this.labelMediane.Size = new System.Drawing.Size(13, 13);
             this.labelMediane.TabIndex = 9;
@@ -161,7 +162,7 @@ namespace seuilAuto
             // 
             this.button2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(22, 208);
+            this.button2.Location = new System.Drawing.Point(22, 223);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 4;
@@ -303,7 +304,7 @@ namespace seuilAuto
             // 
             this.labelScore.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.labelScore.AutoSize = true;
-            this.labelScore.Location = new System.Drawing.Point(265, 30);
+            this.labelScore.Location = new System.Drawing.Point(265, 32);
             this.labelScore.Name = "labelScore";
             this.labelScore.Size = new System.Drawing.Size(13, 13);
             this.labelScore.TabIndex = 1;
@@ -313,7 +314,7 @@ namespace seuilAuto
             // 
             this.labelTemps.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.labelTemps.AutoSize = true;
-            this.labelTemps.Location = new System.Drawing.Point(263, 103);
+            this.labelTemps.Location = new System.Drawing.Point(263, 110);
             this.labelTemps.Name = "labelTemps";
             this.labelTemps.Size = new System.Drawing.Size(18, 13);
             this.labelTemps.TabIndex = 3;
@@ -323,7 +324,7 @@ namespace seuilAuto
             // 
             this.label5.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(65, 176);
+            this.label5.Location = new System.Drawing.Point(65, 188);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(50, 13);
             this.label5.TabIndex = 4;
@@ -333,7 +334,7 @@ namespace seuilAuto
             // 
             this.labelNumero.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.labelNumero.AutoSize = true;
-            this.labelNumero.Location = new System.Drawing.Point(260, 176);
+            this.labelNumero.Location = new System.Drawing.Point(260, 188);
             this.labelNumero.Name = "labelNumero";
             this.labelNumero.Size = new System.Drawing.Size(24, 13);
             this.labelNumero.TabIndex = 5;
@@ -343,7 +344,7 @@ namespace seuilAuto
             // 
             this.label7.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(62, 322);
+            this.label7.Location = new System.Drawing.Point(62, 344);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(57, 13);
             this.label7.TabIndex = 6;
@@ -413,7 +414,7 @@ namespace seuilAuto
             // 
             this.label3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(68, 103);
+            this.label3.Location = new System.Drawing.Point(68, 110);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(45, 13);
             this.label3.TabIndex = 2;
@@ -423,7 +424,7 @@ namespace seuilAuto
             // 
             this.button4.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.button4.Enabled = false;
-            this.button4.Location = new System.Drawing.Point(22, 385);
+            this.button4.Location = new System.Drawing.Point(22, 412);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 6;
@@ -448,13 +449,13 @@ namespace seuilAuto
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(120, 442);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(120, 472);
             this.tableLayoutPanel1.TabIndex = 11;
             // 
             // button1
             // 
             this.button1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.button1.Location = new System.Drawing.Point(22, 120);
+            this.button1.Location = new System.Drawing.Point(22, 129);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 3;
@@ -468,7 +469,7 @@ namespace seuilAuto
             this.statePanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.statePanel.Location = new System.Drawing.Point(3, 3);
             this.statePanel.Name = "statePanel";
-            this.statePanel.Size = new System.Drawing.Size(114, 82);
+            this.statePanel.Size = new System.Drawing.Size(114, 88);
             this.statePanel.TabIndex = 7;
             // 
             // stateLabel
@@ -516,14 +517,14 @@ namespace seuilAuto
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.66667F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(363, 442);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(363, 472);
             this.tableLayoutPanel3.TabIndex = 10;
             // 
             // label1
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(68, 30);
+            this.label1.Location = new System.Drawing.Point(68, 32);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(44, 13);
             this.label1.TabIndex = 0;
@@ -533,7 +534,7 @@ namespace seuilAuto
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(67, 249);
+            this.label2.Location = new System.Drawing.Point(67, 266);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(47, 13);
             this.label2.TabIndex = 10;
@@ -543,7 +544,7 @@ namespace seuilAuto
             // 
             this.labelFichier.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.labelFichier.AutoSize = true;
-            this.labelFichier.Location = new System.Drawing.Point(272, 249);
+            this.labelFichier.Location = new System.Drawing.Point(272, 266);
             this.labelFichier.Name = "labelFichier";
             this.labelFichier.Size = new System.Drawing.Size(0, 13);
             this.labelFichier.TabIndex = 11;
@@ -593,7 +594,7 @@ namespace seuilAuto
             this.last10table.Controls.Add(this.pictureBoxPOST9, 8, 2);
             this.last10table.Controls.Add(this.pictureBoxPOST10, 9, 2);
             this.last10table.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.last10table.Location = new System.Drawing.Point(0, 454);
+            this.last10table.Location = new System.Drawing.Point(0, 491);
             this.last10table.Name = "last10table";
             this.last10table.RowCount = 3;
             this.last10table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 38.8664F));
@@ -738,11 +739,19 @@ namespace seuilAuto
             this.currenttable.Size = new System.Drawing.Size(774, 442);
             this.currenttable.TabIndex = 8;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(8, 455);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(766, 23);
+            this.progressBar1.TabIndex = 12;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1292, 715);
+            this.ClientSize = new System.Drawing.Size(1292, 752);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.tableLayoutPanel3);
             this.Controls.Add(this.last10table);
@@ -750,7 +759,6 @@ namespace seuilAuto
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Seuillage en deux classes";
-            this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPRE1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPRE2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxPRE3)).EndInit();
@@ -844,6 +852,7 @@ namespace seuilAuto
         private System.Windows.Forms.TableLayoutPanel currenttable;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label labelFichier;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 

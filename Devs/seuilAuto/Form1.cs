@@ -23,20 +23,32 @@ namespace seuilAuto
     public partial class Form1 : Form
     {
         int moyenne = 0, mediane = 0, currentScore = 0, somme = 0;
-        bool run = false;
-        List<Image> imagesPost = new List<Image>();
-        List<Image> imagesTraitees = new List<Image>();
-        List<String> titres = new List<String>();
         
-        List<Tuple<Image, Image>> images;
-        int position = 0;
+        // Liste des images chargées
+        List<String> titres = new List<String>();
+        List<Tuple<Image, Image>> loadedFiles = new List<Tuple<Image, Image>>();
+        List<ClImage> clImages = new List<ClImage>();
+
+        // Variables pour l'affichage des images
+        int positionAffichage = 0; // désactive RUN à la fin de la liste
+        PictureBox[] preBoxes = null;
+        PictureBox[] postBoxes = null;
+        Label[] scores = null;
+
+        // Variables pour le multithreading
+        int nbThreads = 8;
+        List<Thread> threads = new List<Thread>();
+        Queue<ClImage> buffer = new Queue<ClImage>();
+        List<int> positionBuffer = new List<int>(); // = -1 arrivé à la fin de la liste
+        int bufferLength = 50;
 
         public enum State
         {
             INIT,
             READY,
             RUN,
-            RUN_STOP
+            RUN_STOP,
+            END_THREADS
         }
 
         private State currentState = State.INIT;
@@ -47,11 +59,12 @@ namespace seuilAuto
         {
             InitializeComponent();
             processState(State.INIT);
+            this.FormClosing += Form1_FormClosing; // Attach the event handler to the FormClosing event
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            images = LoadBmpImages();
+            LoadBmpImages();
             loadFirst();
             processState(State.READY);
         }
@@ -59,191 +72,238 @@ namespace seuilAuto
         private void button2_Click(object sender, EventArgs e)
         {
             processState(State.RUN);
-            traitement();
+            affichage();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             processState(State.RUN_STOP);
-            
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             // dossier de destination
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
-            {
-                // chemin du dossier sélectionné
-                string selectedPath = folderBrowserDialog.SelectedPath;
+            if (folderBrowserDialog.ShowDialog() != DialogResult.OK)
+                return;
 
-                // chemins des dossiers pour les images PRE et POST
-                string preFilePath = Path.Combine(selectedPath, "PreImages");
-                string postFilePath = Path.Combine(selectedPath, "PostImages");
+            // chemin du dossier sélectionné
+            string selectedPath = folderBrowserDialog.SelectedPath;
 
-                saveImage(imagesPost,imagesTraitees,preFilePath,postFilePath);
+            // chemins des dossiers pour les images PRE et POST
+            string preFilePath = Path.Combine(selectedPath, "PreImages");
+            string postFilePath = Path.Combine(selectedPath, "PostImages");
 
-                MessageBox.Show("Images sauvegardées avec succès!");
-             }
-            
+            //saveImage(imagesPost, imagesTraitees, preFilePath, postFilePath);
+
+            MessageBox.Show("Images sauvegardées avec succès!");
         }
 
-        private void loadFirst()
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (images.Count == 0)
-            {
+            processState(State.END_THREADS);
+        }
+
+        //Chargement des images BMP depuis les fichiers
+        public void LoadBmpImages()
+        {
+            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
+            if (folderBrowserDialog1.ShowDialog() != DialogResult.OK)
+                return;
+
+            string path = folderBrowserDialog1.SelectedPath;
+            string sources = path + "\\Source Images - bmp";
+            string gt = path + "\\Ground Truth - bmp";
+
+            string[] source_files = Directory.GetFiles(sources, "*.bmp");
+            string[] gt_files = Directory.GetFiles(gt, "*.bmp");
+            
+            if (source_files.Length == 0){
+                MessageBox.Show("Aucune image BMP trouvée dans le dossier sélectionné.");
                 return;
             }
-            position = 0;
-            pictureBoxPRE.Image = images[position].Item1;
-            labelNumero.Text = (position + 1) + "/" + images.Count;
-            labelFichier.Text = titres[position];
-        }
 
-        public List<Tuple<Image, Image>> LoadBmpImages()
-        {
-            List<Tuple<Image, Image>> images = new List<Tuple<Image, Image>>();
-            FolderBrowserDialog folderBrowserDialog1 = new FolderBrowserDialog();
-            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
-            {
-                string path = folderBrowserDialog1.SelectedPath;
-                string sources = path + "\\Source Images - bmp";
-                string gt = path + "\\Ground Truth - bmp";
+            foreach (string file in source_files){
+                string file_title = Path.GetFileName(file);
+                titres.Add(file_title);
+                Image image = Image.FromFile(file);
+                Image GT = Image.FromFile(gt + "\\" + file_title);
 
-                string[] source_files = Directory.GetFiles(sources, "*.bmp");
-                string[] gt_files = Directory.GetFiles(gt, "*.bmp");
-                if (source_files.Length == 0)
-                {
-                    MessageBox.Show("Aucune image BMP trouvée dans le dossier sélectionné.");
-                    return images;
-                }
-
-                foreach (string file in source_files)
-                {
-                    string file_title = Path.GetFileName(file);
-                    titres.Add(file_title);
-                    Image image = Image.FromFile(file);
-                    Image GT = Image.FromFile(gt + "\\" + file_title);
-                    Tuple<Image, Image> t = new Tuple<Image, Image>(image, GT);
-                    images.Add(t);
-                }
+                Tuple<Image, Image> t = new Tuple<Image, Image>(image, GT);
+                loadedFiles.Add(t);
             }
-            return images;
         }
 
-        private void traitement()
+        //Chargement de la première image & lancement des threads de traitement
+        private void loadFirst(){
+            if (loadedFiles.Count == 0)
+                return;
+
+            positionAffichage = 0;
+            pictureBoxPRE.Image = loadedFiles[positionAffichage].Item1;
+            labelNumero.Text = (positionAffichage + 1) + "/" + loadedFiles.Count;
+            labelFichier.Text = titres[positionAffichage];
+
+            for (int i = 0; i < nbThreads; i++)
+            {
+                Thread th = new Thread(thread_suivi_buffer);
+                positionBuffer.Add(i);
+                th.Start(i);
+                threads.Add(th);
+            }
+            Thread pBar = new Thread(updateBar);
+            pBar.Start();
+        }
+
+        // Boucle de chaque thread de traitement
+        private void thread_suivi_buffer(object id)
         {
-            PictureBox[] preBoxes = new PictureBox[]
-            {
-                pictureBoxPRE1, pictureBoxPRE2, pictureBoxPRE3, pictureBoxPRE4, pictureBoxPRE5, pictureBoxPRE6, pictureBoxPRE7, pictureBoxPRE8, pictureBoxPRE9, pictureBoxPRE10
+            while (currentState != State.END_THREADS)
+                if (buffer.Count < bufferLength)
+                    avancerBuffer((int)id);
+        }
 
-            };
-            PictureBox[] postBoxes = new PictureBox[]
-            {
-                pictureBoxPOST1, pictureBoxPOST2, pictureBoxPOST3, pictureBoxPOST4, pictureBoxPOST5, pictureBoxPOST6, pictureBoxPOST7, pictureBoxPOST8, pictureBoxPOST9, pictureBoxPOST10
+        //Fonction d'appel safe du traitement
+        private void avancerBuffer(int id)
+        {
+            if (positionBuffer[id] == -1)
+                return;
 
-            };
+            buffer.Enqueue(ClImage.traiter(loadedFiles[positionBuffer[id]]));
+            positionBuffer[id] += nbThreads;
 
-            Label[] scores = new Label[]
-            {
-                labelScore1, labelScore2, labelScore3, labelScore4, labelScore5, labelScore6, labelScore7, labelScore8, labelScore9, labelScore10
-            };
+            if (positionBuffer[id] >= loadedFiles.Count)
+                positionBuffer[id] = -1;
 
-            while (currentState == State.RUN)
+        }
+
+        private void updateBar()
+        {
+            while (currentState != State.END_THREADS)
             {
-                goToNext(preBoxes, postBoxes, scores);
+                //progressBar1.Value = 100 * buffer.Count / bufferLength;
+                Thread.Sleep(50);
+            }
+        }
+
+        // Lancement du thread d'affichage des images
+        private void affichage(){
+            preBoxes = new PictureBox[] { pictureBoxPRE1, pictureBoxPRE2, pictureBoxPRE3, pictureBoxPRE4, pictureBoxPRE5, pictureBoxPRE6, pictureBoxPRE7, pictureBoxPRE8, pictureBoxPRE9, pictureBoxPRE10};
+            postBoxes = new PictureBox[]{ pictureBoxPOST1, pictureBoxPOST2, pictureBoxPOST3, pictureBoxPOST4, pictureBoxPOST5, pictureBoxPOST6, pictureBoxPOST7, pictureBoxPOST8, pictureBoxPOST9, pictureBoxPOST10};
+            scores = new Label[] { labelScore1, labelScore2, labelScore3, labelScore4, labelScore5, labelScore6, labelScore7, labelScore8, labelScore9, labelScore10 };
+
+            while (currentState == State.RUN){
+                goToNext();
                 Application.DoEvents();
-                Thread.Sleep(10);
-                // MessageBox.Show("OK");
-
+                Thread.Sleep(300);
             }
-
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
+        // Affichage de l'image suivante
+        private void goToNext(){
+            if (buffer.Count == 0)
+                return;
 
-        }
+            ClImage Img = buffer.Dequeue();
+           
+            Bitmap sourceBMP = new Bitmap(Img.source);
+            Bitmap resultBMP = new Bitmap(Img.result);
 
-        private void goToNext(PictureBox[] preBoxes, PictureBox[] postBoxes, Label[] scores)
-        {
-            Image old = pictureBoxPRE.Image = images[position].Item1;
-            labelFichier.Text = titres[position];
-            Bitmap sourceBMP = new Bitmap(old);
-            Bitmap GTBMP = new Bitmap(images[position].Item2);
-            ClImage Img = new ClImage();
+            // Affichage de l'image source
+            pictureBoxPRE.Image = sourceBMP;
+            labelFichier.Text = titres[positionAffichage];
+            labelNumero.Text = (positionAffichage + 1) + "/" + loadedFiles.Count;
 
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            unsafe
-            {
-                BitmapData sourceBMPData = sourceBMP.LockBits(new Rectangle(0, 0, sourceBMP.Width, sourceBMP.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                BitmapData GTbmpData = GTBMP.LockBits(new Rectangle(0, 0, GTBMP.Width, GTBMP.Height), ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb);
-                Img.objetLibDataImgPtr(5, sourceBMPData.Scan0, GTbmpData.Scan0, sourceBMPData.Stride, sourceBMP.Height, sourceBMP.Width);
-                // 1 champ texte retour C++, le seuil auto
-                sourceBMP.UnlockBits(sourceBMPData);
-                GTBMP.UnlockBits(GTbmpData);
-            }
-            stopwatch.Stop();
-            TimeSpan elapsedTime = stopwatch.Elapsed;
 
-            pictureBoxPOST.Image = sourceBMP;
-            labelTemps.Text = $"{elapsedTime.TotalSeconds:F2}s";
-            currentScore = (int)(100 * Math.Max(Img.objetLibValeurChamp(3), Img.objetLibValeurChamp(4)));//(int)(100 * Math.Sqrt(Img.objetLibValeurChamp(3) * Img.objetLibValeurChamp(4)));
+
+            //Affichage de l'image traitée
+            pictureBoxPOST.Image = resultBMP;
+
+            //Gestion du Score
+            currentScore = (int)(100 * Math.Max(Img.objetLibValeurChamp(0), Img.objetLibValeurChamp(1)));
             somme += currentScore;
-            moyenne = somme/(position+1);
-            labelScore.Text = currentScore  + "%";
-            //labelScore.Text = "Score : " + Img.objetLibValeurChamp(0) +";"+ Img.objetLibValeurChamp(1) +";"+ Img.objetLibValeurChamp(2) + "%";
+            moyenne = somme / (positionAffichage + 1);
+
+            // Gestion des labels
+            labelScore.Text = currentScore + "%";
             labelMoyenne.Text = moyenne + "%";
-            labelNumero.Text = (position + 1) + "/" + images.Count;
-            
+            labelTemps.Text = $"{Img.tempsTraitement/nbThreads:F2}s";
+
 
             // Mise à jour des images précédentes
             for (int i = preBoxes.Length - 1; i > 0; i--)
-            {
                 if (preBoxes[i - 1].Image != null)
-                {
                     preBoxes[i].Image = preBoxes[i - 1].Image;
-                }
-
-            }
+            
             preBoxes[0].Image = pictureBoxPRE.Image;
-            imagesPost.Add(preBoxes[0].Image);
 
+            
             for (int i = postBoxes.Length - 1; i > 0; i--)
-            {
                 if (postBoxes[i - 1].Image != null)
-                {
                     postBoxes[i].Image = postBoxes[i - 1].Image;
-                }
 
-            }
             postBoxes[0].Image = pictureBoxPOST.Image;
-            imagesTraitees.Add(postBoxes[0].Image);
+
             
             for (int i = scores.Length - 1; i > 0; i--)
-            {
                 if (scores[i - 1].Text != null)
-                {
                     scores[i].Text = scores[i - 1].Text;
-                }
 
-            }
             scores[0].Text = labelScore.Text + " (" + labelTemps.Text + ")";
 
 
-            position++;
-            if (position >= images.Count)
+            positionAffichage++;
+            if (positionAffichage >= loadedFiles.Count)
             {
-                position = 0;
+                positionAffichage = 0;
+                for (int i = 0; i < nbThreads; i++)
+                    positionBuffer[i] = 0;
                 processState(State.RUN_STOP);
-                //loadFirst();
                 return;
             }
         }
 
-        private void processState(State newState)
+        private void saveImage(string pathPre, string pathPost)
         {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                //string selectedPath = folderBrowserDialog.SelectedPath;
+                //string imgTraitees = Path.Combine(selectedPath, "ImgPOST");
+
+                // création dossier pour images PRE et images POST
+                if (!Directory.Exists(pathPre))
+                    Directory.CreateDirectory(pathPre);
+
+                if (!Directory.Exists(pathPost))
+                    Directory.CreateDirectory(pathPost);
+
+                // enregistrement des img
+                for (int i = 0; i < clImages.Count; i++)
+                {
+                    string fileName = timeFileName("PRE", i);
+                    string filePath = Path.Combine(pathPre, fileName);
+                    clImages[i].source.Save(filePath, ImageFormat.Bmp);
+                }
+
+                for (int i = 0; i < clImages.Count; i++)
+                {
+                    string fileName = timeFileName("POST", i);
+                    string filePath = Path.Combine(pathPost, fileName);
+                    clImages[i].result.Save(filePath, ImageFormat.Bmp);
+                }
+
+                MessageBox.Show("Images enregistrées avec succès!");
+            }
+        }
+
+        private string timeFileName(string nomImg, int index)
+        {
+            return $"{nomImg}_{index + 1}_{DateTime.Now:yyyy-MM-dd_HH-mm}.bmp";
+        }
+
+        private void processState(State newState){
             currentState = newState;
             switch (newState)
             {
@@ -281,52 +341,7 @@ namespace seuilAuto
                     break;
             }
 
-            
+
         }
-
-        private void saveImage(List<Image> post, List<Image> pre, string pathPre, string pathPost)
-        {
-            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
-            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
-            {
-                //string selectedPath = folderBrowserDialog.SelectedPath;
-                //string imgTraitees = Path.Combine(selectedPath, "ImgPOST");
-
-                // création dossier pour images PRE et images POST
-                if (!Directory.Exists(pathPre))
-                {
-                    Directory.CreateDirectory(pathPre);
-                }
-                if (!Directory.Exists(pathPost))
-                {
-                    Directory.CreateDirectory(pathPost);
-                }
-
-                // enregistrement des img
-                for (int i = 0; i < pre.Count; i++)
-                {
-                    string fileName = timeFileName("PRE", i);
-                    string filePath = Path.Combine(pathPre, fileName);
-                    pre[i].Save(filePath, ImageFormat.Bmp);
-                }
-
-                for (int i = 0; i < post.Count; i++)
-                {
-                    string fileName = timeFileName("POST", i);
-                    string filePath = Path.Combine(pathPost, fileName);
-                    post[i].Save(filePath, ImageFormat.Bmp);
-                }
-
-                MessageBox.Show("Images enregistrées avec succès!");
-            }
-        }
-
-
-        private string timeFileName(string nomImg, int index)
-        {
-            return $"{nomImg}_{index + 1}_{DateTime.Now:yyyy-MM-dd_HH-mm}.bmp";
-        }
-
-
     }
 }
