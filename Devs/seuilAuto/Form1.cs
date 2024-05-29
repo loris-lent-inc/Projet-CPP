@@ -100,6 +100,7 @@ namespace seuilAuto
 
             if (!Directory.Exists(postFilePath))
                 Directory.CreateDirectory(postFilePath);
+
             saveImage(preFilePath, postFilePath);
 
             MessageBox.Show("Images sauvegardées avec succès!");
@@ -285,20 +286,21 @@ namespace seuilAuto
             // enregistrement des img
             for (int i = 0; i < clImages.Count; i++)
             {
-               string fileNamePre = timeFileName("PRE", i);
+               string fileNamePre = timeFileName("PRE_" + titres[i+1].Substring(0, titres[i + 1].Length - 4));
                string filePathPre = Path.Combine(pathPre, fileNamePre);
                clImages[i].source.Save(filePathPre, ImageFormat.Bmp);
 
-               string fileNamePost = timeFileName("POST", i);
+               string fileNamePost = timeFileName("POST_" + titres[i + 1].Substring(0, titres[i + 1].Length - 4));
                string filePathPost = Path.Combine(pathPost, fileNamePost);
                clImages[i].result.Save(filePathPost, ImageFormat.Bmp);
             }
             
         }
 
-        private string timeFileName(string nomImg, int index)
+        private string timeFileName(string nomImg)
         {
-            return $"{nomImg}_{index + 1}_{DateTime.Now:yyyy-MM-dd_HH-mm}.bmp";
+
+            return $"{nomImg}_{DateTime.Now:yyyy-MM-dd_HH-mm}.bmp";
         }
 
         private void processState(State newState){
