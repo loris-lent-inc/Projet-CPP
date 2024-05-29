@@ -40,7 +40,7 @@ namespace seuilAuto
         List<Thread> threads = new List<Thread>();
         Queue<ClImage> buffer = new Queue<ClImage>();
         List<int> positionBuffer = new List<int>(); // = -1 arrivé à la fin de la liste
-        int bufferLength = 50;
+        int bufferLength = 600;
 
         public enum State
         {
@@ -188,21 +188,29 @@ namespace seuilAuto
         {
             while (currentState != State.END_THREADS)
             {
-                //progressBar1.Value = 100 * buffer.Count / bufferLength;
+                int value = (int)(100 * ((double)buffer.Count / bufferLength));
+                progressBar1.Value = Math.Min(100, value);
                 Thread.Sleep(50);
             }
         }
 
         // Lancement du thread d'affichage des images
         private void affichage(){
-            preBoxes = new PictureBox[] { pictureBoxPRE1, pictureBoxPRE2, pictureBoxPRE3, pictureBoxPRE4, pictureBoxPRE5, pictureBoxPRE6, pictureBoxPRE7, pictureBoxPRE8, pictureBoxPRE9, pictureBoxPRE10};
-            postBoxes = new PictureBox[]{ pictureBoxPOST1, pictureBoxPOST2, pictureBoxPOST3, pictureBoxPOST4, pictureBoxPOST5, pictureBoxPOST6, pictureBoxPOST7, pictureBoxPOST8, pictureBoxPOST9, pictureBoxPOST10};
-            scores = new Label[] { labelScore1, labelScore2, labelScore3, labelScore4, labelScore5, labelScore6, labelScore7, labelScore8, labelScore9, labelScore10 };
+            if(preBoxes == null)
+                preBoxes = new PictureBox[] { pictureBoxPRE1, pictureBoxPRE2, pictureBoxPRE3, pictureBoxPRE4, pictureBoxPRE5, pictureBoxPRE6, pictureBoxPRE7, pictureBoxPRE8, pictureBoxPRE9, pictureBoxPRE10};
+            if(postBoxes == null)
+                postBoxes = new PictureBox[]{ pictureBoxPOST1, pictureBoxPOST2, pictureBoxPOST3, pictureBoxPOST4, pictureBoxPOST5, pictureBoxPOST6, pictureBoxPOST7, pictureBoxPOST8, pictureBoxPOST9, pictureBoxPOST10};
+            if(scores == null)
+                scores = new Label[] { labelScore1, labelScore2, labelScore3, labelScore4, labelScore5, labelScore6, labelScore7, labelScore8, labelScore9, labelScore10 };
+            if (clImages.Count != 0)
+                clImages.Clear();
 
             while (currentState == State.RUN){
                 goToNext();
                 Application.DoEvents();
-                Thread.Sleep(300);
+                int value = (int)(100 * ((double)buffer.Count / bufferLength));
+                progressBar1.Value = Math.Min(100, value);
+                //Thread.Sleep(300);
             }
         }
 
@@ -212,6 +220,7 @@ namespace seuilAuto
                 return;
 
             ClImage Img = buffer.Dequeue();
+            clImages.Add(Img);
            
             Bitmap sourceBMP = new Bitmap(Img.source);
             Bitmap resultBMP = new Bitmap(Img.result);
@@ -220,8 +229,6 @@ namespace seuilAuto
             pictureBoxPRE.Image = sourceBMP;
             labelFichier.Text = titres[positionAffichage];
             labelNumero.Text = (positionAffichage + 1) + "/" + loadedFiles.Count;
-
-
 
             //Affichage de l'image traitée
             pictureBoxPOST.Image = resultBMP;
@@ -235,7 +242,6 @@ namespace seuilAuto
             labelScore.Text = currentScore + "%";
             labelMoyenne.Text = moyenne + "%";
             labelTemps.Text = $"{Img.tempsTraitement/nbThreads:F2}s";
-
 
             // Mise à jour des images précédentes
             for (int i = preBoxes.Length - 1; i > 0; i--)
@@ -258,11 +264,12 @@ namespace seuilAuto
 
             scores[0].Text = labelScore.Text + " (" + labelTemps.Text + ")";
 
-
+            // Mise à jour de la position d'affichage
             positionAffichage++;
             if (positionAffichage >= loadedFiles.Count)
             {
                 positionAffichage = 0;
+                somme = 0;
                 for (int i = 0; i < nbThreads; i++)
                     positionBuffer[i] = i;
                 processState(State.RUN_STOP);
